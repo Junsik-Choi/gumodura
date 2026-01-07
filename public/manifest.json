@@ -1,0 +1,24 @@
+{
+  "name": "그 뭐더라 - 생활 도구 종합",
+  "short_name": "그뭐더라",
+  "description": "어르신도 쓰기 쉬운 생활, 파일, 놀이 도구 종합 웹사이트",
+  "start_url": "/gumodura/",
+  "display": "standalone",
+  "background_color": "#f9fafb",
+  "theme_color": "#7C3AED",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/gumodura/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/gumodura/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

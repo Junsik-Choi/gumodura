@@ -1,0 +1,230 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 기본 스타일 (어르신 친화적 + 모바일 최적화) */
+:root {
+  --ai-primary: #7C3AED;
+  --ai-primary-light: #A78BFA;
+  --ai-primary-dark: #5B21B6;
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+/* 모바일 기본 폰트 크기 증가 */
+@media (max-width: 640px) {
+  html {
+    font-size: 17px;
+  }
+}
+
+body {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+  color: #1f2937;
+  background-color: #f9fafb;
+  /* 모바일 뷰포트 높이 문제 해결 */
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* iOS Safari Safe Area */
+.safe-area-top {
+  padding-top: var(--safe-area-top);
+}
+
+.safe-area-bottom {
+  padding-bottom: var(--safe-area-bottom);
+}
+
+/* 버튼 기본 스타일 */
+button, a {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* 스크롤바 스타일 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* 모바일에서 스크롤바 숨김 */
+@media (max-width: 640px) {
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  
+  body {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* 터치 영역 최소 크기 보장 */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* 텍스트 선택 방지 (UI 요소) */
+.no-select {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* 포커스 스타일 (접근성) */
+:focus-visible {
+  outline: 2px solid var(--ai-primary);
+  outline-offset: 2px;
+}
+
+/* 모바일 터치 피드백 */
+@media (hover: none) {
+  .hover\:scale-105:active {
+    transform: scale(1.02);
+  }
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.4s ease-out;
+}
+
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 2s ease-in-out infinite;
+}
+
+/* 카드 호버 효과 */
+.card-hover {
+  transition: all 0.2s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.15);
+}
+
+/* 모바일에서는 호버 대신 터치 효과 */
+@media (hover: none) {
+  .card-hover:active {
+    transform: scale(0.98);
+    box-shadow: none;
+  }
+  
+  .card-hover:hover {
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+/* 그라데이션 텍스트 */
+.gradient-text {
+  background: linear-gradient(135deg, var(--ai-primary) 0%, var(--ai-primary-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* 로딩 스피너 */
+.spinner {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid var(--ai-primary);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 모바일 입력 필드 스타일 개선 */
+input, textarea, select {
+  font-size: 16px; /* iOS 줌 방지 */
+  border-radius: 0; /* iOS 기본 스타일 제거 */
+}
+
+input[type="text"],
+input[type="search"],
+textarea {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* 파일 입력 스타일 */
+input[type="file"] {
+  font-size: 16px;
+}
+
+/* 모바일 최적화 그리드 */
+@media (max-width: 640px) {
+  .mobile-full {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* Pull to refresh 방지 (필요시) */
+body.no-pull-refresh {
+  overscroll-behavior-y: contain;
+}
