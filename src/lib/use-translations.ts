@@ -22,7 +22,7 @@ export function useTranslatedTexts(texts: string[], sourceLanguage: Language = '
     return () => {
       active = false;
     };
-  }, [language, signature]);
+  }, [language, signature, sourceLanguage]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return translatedTexts;
 }
