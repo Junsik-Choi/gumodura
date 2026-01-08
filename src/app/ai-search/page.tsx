@@ -5,6 +5,9 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import ToolCard from '@/components/ToolCard';
 import { AISearchResult } from '@/lib/types';
 import { clientSearch, saveFeatureRequest } from '@/lib/client-search';
+import { useLanguage } from '@/components/LanguageProvider';
+import { translateTexts } from '@/lib/translation-client';
+import { useTranslatedText, useTranslatedTexts } from '@/lib/use-translations';
 
 /**
  * AI 검색 결과 페이지
@@ -17,6 +20,7 @@ function AISearchContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const query = searchParams.get('q') || '';
+  const { language } = useLanguage();
   
   const [result, setResult] = useState<AISearchResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -24,10 +28,68 @@ function AISearchContent() {
   const [requestSent, setRequestSent] = useState(false);
   const [sendingRequest, setSendingRequest] = useState(false);
   const [searchInput, setSearchInput] = useState(query);
+  const [resolvedQuery, setResolvedQuery] = useState(query);
+  const [
+    searchPlaceholder,
+    searchButtonLabel,
+    searchResultLabel,
+    loadingLabel,
+    errorLabel,
+    requestErrorLabel,
+    bestMatchLabel,
+    alternativesLabel,
+    noMatchTitle,
+    requestPrompt,
+    requestSendingLabel,
+    requestSendLabel,
+    requestSentLabel,
+    requestThanksLabel,
+    emptyTitle,
+    emptyBody,
+    emptyExample,
+  ] = useTranslatedTexts([
+    'AI에게 필요한 기능을 물어보세요',
+    '검색',
+    '검색 결과',
+    '적합한 기능을 찾고 있어요...',
+    '검색 중 오류가 발생했습니다.',
+    '요청 전송 중 오류가 발생했습니다.',
+    '가장 적합한 기능',
+    '이런 기능도 있어요',
+    '아직 이 기능이 없어요',
+    '개발자에게 요청을 보내드릴까요?',
+    '요청 보내는 중...',
+    '네, 요청 보내기',
+    '요청이 접수되었습니다!',
+    '요청해 주시면 검토 후 빠르게 추가해 드릴게요 🙏',
+    '어떤 기능이 필요하세요?',
+    '상단 검색창에 필요한 기능을 입력해 주세요.',
+    '예: “사진 여러 장 PDF로”, “예쁜 QR 만들기”',
+  ]);
+  const noMatchMessage = useTranslatedText(`“${query}”에 맞는 기능을 찾지 못했어요.`);
 
   // 검색 실행 (클라이언트 사이드)
   useEffect(() => {
-    if (!query) return;
+    if (!query) {
+      setResolvedQuery('');
+      return;
+    }
+
+    let active = true;
+
+    translateTexts([query], 'ko', language).then(([translated]) => {
+      if (active) {
+        setResolvedQuery(translated || query);
+      }
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [query, language]);
+
+  useEffect(() => {
+    if (!resolvedQuery) return;
     
     setLoading(true);
     setError(null);
@@ -36,17 +98,17 @@ function AISearchContent() {
     // 약간의 딜레이로 UX 개선
     const timer = setTimeout(() => {
       try {
-        const searchResult = clientSearch(query);
+        const searchResult = clientSearch(resolvedQuery);
         setResult(searchResult);
       } catch {
-        setError('검색 중 오류가 발생했습니다.');
+        setError(errorLabel);
       } finally {
         setLoading(false);
       }
     }, 300);
     
     return () => clearTimeout(timer);
-  }, [query]);
+  }, [resolvedQuery, errorLabel]);
 
   // 검색 입력 동기화
   useEffect(() => {
@@ -70,10 +132,10 @@ function AISearchContent() {
       if (success) {
         setRequestSent(true);
       } else {
-        setError('요청 저장에 실패했습니다.');
+        setError(requestErrorLabel);
       }
     } catch {
-      setError('요청 전송 중 오류가 발생했습니다.');
+      setError(requestErrorLabel);
     } finally {
       setSendingRequest(false);
     }
@@ -103,14 +165,14 @@ function AISearchContent() {
             type="text"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="AI에게 필요한 기능을 물어보세요"
+            placeholder={searchPlaceholder}
             className="flex-1 py-4 pr-4 text-lg text-gray-700 placeholder-gray-400 bg-transparent outline-none"
           />
           <button
             type="submit"
             className="mr-3 px-6 py-2.5 bg-ai-primary hover:bg-ai-primary-dark text-white font-semibold rounded-xl transition-colors"
           >
-            검색
+            {searchButtonLabel}
           </button>
         </div>
       </form>
@@ -119,7 +181,7 @@ function AISearchContent() {
       {query && (
         <div className="mb-6">
           <p className="text-lg text-gray-600">
-            <span className="font-semibold text-ai-primary">&ldquo;{query}&rdquo;</span> 검색 결과
+            <span className="font-semibold text-ai-primary">&ldquo;{query}&rdquo;</span> {searchResultLabel}
           </p>
         </div>
       )}
@@ -128,7 +190,7 @@ function AISearchContent() {
       {loading && (
         <div className="flex flex-col items-center justify-center py-16">
           <div className="spinner mb-4" style={{ width: 48, height: 48 }} />
-          <p className="text-lg text-gray-600">적합한 기능을 찾고 있어요...</p>
+          <p className="text-lg text-gray-600">{loadingLabel}</p>
         </div>
       )}
 
@@ -150,7 +212,7 @@ function AISearchContent() {
                 <div className="flex items-center gap-2 mb-4">
                   <span className="text-2xl">🎯</span>
                   <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
-                    가장 적합한 기능
+                    {bestMatchLabel}
                   </h2>
                 </div>
                 <ToolCard tool={result.top} showCategory isTop />
@@ -160,12 +222,12 @@ function AISearchContent() {
               {result.alternatives.length > 0 && (
                 <section>
                   <div className="flex items-center gap-2 mb-4">
-                    <span className="text-2xl">💡</span>
-                    <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
-                      이런 기능도 있어요
-                    </h2>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <span className="text-2xl">💡</span>
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
+                    {alternativesLabel}
+                  </h2>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {result.alternatives.map(tool => (
                       <ToolCard key={tool.id} tool={tool} showCategory />
                     ))}
@@ -180,12 +242,12 @@ function AISearchContent() {
             <div className="bg-white rounded-3xl border-2 border-gray-100 p-8 sm:p-12 text-center">
               <div className="text-6xl mb-6">🤔</div>
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">
-                아직 이 기능이 없어요
+                {noMatchTitle}
               </h2>
               <p className="text-lg text-gray-600 mb-8">
-                &ldquo;{query}&rdquo;에 맞는 기능을 찾지 못했어요.
+                {noMatchMessage}
                 <br />
-                개발자에게 요청을 보내드릴까요?
+                {requestPrompt}
               </p>
 
               {!requestSent ? (
@@ -197,14 +259,14 @@ function AISearchContent() {
                   {sendingRequest ? (
                     <>
                       <div className="spinner" />
-                      요청 보내는 중...
+                      {requestSendingLabel}
                     </>
                   ) : (
                     <>
                       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                       </svg>
-                      네, 요청 보내기
+                      {requestSendLabel}
                     </>
                   )}
                 </button>
@@ -213,12 +275,12 @@ function AISearchContent() {
                   <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  요청이 접수되었습니다!
+                  {requestSentLabel}
                 </div>
               )}
 
               <p className="mt-6 text-base text-gray-500">
-                요청해 주시면 검토 후 빠르게 추가해 드릴게요 🙏
+                {requestThanksLabel}
               </p>
             </div>
           )}
@@ -230,12 +292,12 @@ function AISearchContent() {
         <div className="text-center py-16">
           <div className="text-6xl mb-6">🔍</div>
           <h2 className="text-2xl font-bold text-gray-800 mb-4">
-            어떤 기능이 필요하세요?
+            {emptyTitle}
           </h2>
           <p className="text-lg text-gray-600">
-            상단 검색창에 필요한 기능을 입력해 주세요.
+            {emptyBody}
             <br />
-            예: &ldquo;사진 여러 장 PDF로&rdquo;, &ldquo;예쁜 QR 만들기&rdquo;
+            <span className="text-gray-500">{emptyExample}</span>
           </p>
         </div>
       )}

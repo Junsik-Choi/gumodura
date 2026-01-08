@@ -1,6 +1,9 @@
+'use client';
+
 import Link from 'next/link';
 import { Tool } from '@/lib/types';
 import { getCategoryMeta } from '@/lib/categories';
+import { useTranslatedTexts } from '@/lib/use-translations';
 
 interface ToolCardProps {
   tool: Tool;
@@ -17,6 +20,25 @@ interface ToolCardProps {
  */
 export default function ToolCard({ tool, showCategory = false, isTop = false }: ToolCardProps) {
   const category = getCategoryMeta(tool.category);
+  const [
+    name,
+    description,
+    topBadge,
+    newBadge,
+    popularBadge,
+    proBadge,
+    categoryName,
+    ctaLabel,
+  ] = useTranslatedTexts([
+    tool.name_ko,
+    tool.description_ko,
+    '최적 추천',
+    'NEW',
+    '인기',
+    'PRO',
+    category?.name_ko || '',
+    '바로 사용',
+  ]);
 
   return (
     <Link
@@ -40,22 +62,22 @@ export default function ToolCard({ tool, showCategory = false, isTop = false }: 
         <div className="flex flex-col items-end gap-1">
           {isTop && (
             <span className="px-2 py-0.5 text-xs font-semibold bg-ai-primary text-white rounded-full">
-              최적 추천
+              {topBadge}
             </span>
           )}
           {tool.isNew && !isTop && (
             <span className="px-2 py-0.5 text-xs font-semibold bg-green-500 text-white rounded-full">
-              NEW
+              {newBadge}
             </span>
           )}
           {tool.isPopular && !isTop && (
             <span className="px-2 py-0.5 text-xs font-semibold bg-orange-500 text-white rounded-full">
-              인기
+              {popularBadge}
             </span>
           )}
           {tool.isPro && (
             <span className="px-2 py-0.5 text-xs font-semibold bg-yellow-500 text-gray-900 rounded-full">
-              PRO
+              {proBadge}
             </span>
           )}
         </div>
@@ -63,19 +85,19 @@ export default function ToolCard({ tool, showCategory = false, isTop = false }: 
 
       {/* 이름 */}
       <h3 className="text-base sm:text-xl font-bold text-gray-800 mb-1 sm:mb-2">
-        {tool.name_ko}
+        {name}
       </h3>
 
       {/* 설명 */}
       <p className="text-sm sm:text-base text-gray-600 mb-2 sm:mb-3 line-clamp-2">
-        {tool.description_ko}
+        {description}
       </p>
 
       {/* 카테고리 표시 (옵션) */}
       {showCategory && category && (
         <div className="flex items-center gap-1.5 text-xs sm:text-sm text-gray-500 mb-2 sm:mb-0">
           <span>{category.icon}</span>
-          <span>{category.name_ko}</span>
+          <span>{categoryName}</span>
         </div>
       )}
 
@@ -86,7 +108,7 @@ export default function ToolCard({ tool, showCategory = false, isTop = false }: 
           text-sm sm:text-base font-semibold
           ${isTop ? 'text-ai-primary' : 'text-gray-600'}
         `}>
-          바로 사용
+          {ctaLabel}
           <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
