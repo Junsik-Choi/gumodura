@@ -61,12 +61,12 @@ function AISearchContent() {
     }
   };
 
-  // 기능 요청 보내기 (localStorage)
+  // 기능 요청 보내기 (localStorage + 이메일)
   const handleFeatureRequest = async () => {
     setSendingRequest(true);
     try {
       await new Promise(r => setTimeout(r, 500)); // UX용 딜레이
-      const success = saveFeatureRequest(query);
+      const success = await saveFeatureRequest(query);
       if (success) {
         setRequestSent(true);
       } else {

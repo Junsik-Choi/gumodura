@@ -172,17 +172,41 @@ export function clientSearch(query: string): AISearchResult {
 }
 
 /**
- * 기능 요청 저장 (localStorage 사용)
+ * 기능 요청 저장 (localStorage + 이메일)
  */
-export function saveFeatureRequest(query: string): boolean {
+export async function saveFeatureRequest(query: string): Promise<boolean> {
   try {
+    // 1. localStorage에 저장
     const requests = JSON.parse(localStorage.getItem('feature-requests') || '[]');
-    requests.push({
+    const requestData = {
       query,
       timestamp: new Date().toISOString(),
       user_agent: navigator.userAgent,
-    });
+      language: localStorage.getItem('language') || 'ko',
+    };
+    requests.push(requestData);
     localStorage.setItem('feature-requests', JSON.stringify(requests));
+
+    // 2. 이메일로 발송 (Formspree)
+    try {
+      await fetch('https://formspree.io/f/xvgzjzbz', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: '기능 요청',
+          email: 'auto-request@gumodura.app',
+          message: `요청된 기능: ${query}\n타임스탬프: ${requestData.timestamp}\n사용자 에이전트: ${requestData.user_agent}`,
+          type: 'feature-request',
+          query: query,
+        }),
+      });
+    } catch (emailError) {
+      console.error('Email sending failed, but request was saved locally:', emailError);
+      // 로컬 저장에 성공했으므로 true 반환
+    }
+
     return true;
   } catch {
     return false;
