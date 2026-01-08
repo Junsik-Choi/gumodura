@@ -1,34 +1,39 @@
 import CategoryCardExpanded from '@/components/CategoryCardExpanded';
+import HomeSearchBar from '@/components/HomeSearchBar';
+import QuickContactForm from '@/components/QuickContactForm';
 import TranslatedText from '@/components/TranslatedText';
 import { CATEGORIES } from '@/lib/categories';
 import { getToolsByCategory } from '@/lib/registry';
 
 /**
  * 홈페이지
- * - 히어로 섹션 (간결)
+ * - 히어로 섹션 + AI 검색창
  * - 카테고리별 둘러보기 (메인, 상단 배치)
  *   - 각 카테고리에 인기순 3개 도구 미리보기
  *   - 더보기 클릭 시 애니메이션으로 펼침
- * - CTA 배너
+ * - 간편 문의 폼
  * - 모바일 최적화
  */
 export default function HomePage() {
   return (
     <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8">
-      {/* 히어로 섹션 (간결하게) */}
-      <section className="text-center mb-6 sm:mb-10">
+      {/* 히어로 섹션 + AI 검색창 */}
+      <section className="text-center mb-8 sm:mb-12">
         <TranslatedText
           as="h1"
           className="text-2xl sm:text-4xl lg:text-5xl font-bold text-gray-800 mb-2 sm:mb-3"
           text="필요한 기능, 다 있어요! 🔮"
         />
-        <p className="text-sm sm:text-lg text-gray-600 max-w-xl mx-auto">
+        <p className="text-base sm:text-lg text-gray-600 max-w-xl mx-auto mb-6 sm:mb-8">
           <span className="text-ai-primary font-semibold">
             <TranslatedText text="카테고리에서 찾거나" />
           </span>
           {' '}
-          <TranslatedText text="상단 AI 검색으로 바로 찾아보세요" />
+          <TranslatedText text="AI 검색으로 바로 찾아보세요" />
         </p>
+        
+        {/* AI 검색창 */}
+        <HomeSearchBar />
       </section>
 
       {/* 카테고리별 둘러보기 (메인 섹션) */}
@@ -57,23 +62,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA 배너 */}
-      <section className="bg-gradient-to-r from-ai-primary to-ai-primary-light rounded-2xl sm:rounded-3xl p-6 sm:p-10 text-center text-white">
-        <TranslatedText
-          as="h2"
-          className="text-xl sm:text-2xl font-bold mb-3"
-          text="찾는 기능이 없으신가요?"
-        />
-        <p className="text-sm sm:text-lg opacity-90 mb-4">
-          <TranslatedText text="AI 검색창에 필요한 기능을 말씀해 주세요." />
-        </p>
-        <div className="inline-flex items-center gap-2 bg-white text-ai-primary px-5 py-2.5 rounded-full font-semibold text-sm sm:text-base">
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-          </svg>
-          <TranslatedText text="상단 검색창 이용하기" />
-        </div>
-      </section>
+      {/* 간편 문의 폼 */}
+      <QuickContactForm />
     </div>
   );
 }

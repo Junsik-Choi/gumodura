@@ -67,8 +67,8 @@ export default function Header() {
                   relative flex items-center w-full
                   rounded-full border-2 transition-all duration-300
                   ${isFocused 
-                    ? 'border-ai-primary shadow-lg shadow-ai-primary/20' 
-                    : 'border-gray-200 hover:border-ai-primary-light'
+                    ? 'border-gray-300 shadow-lg' 
+                    : 'border-gray-200 hover:border-gray-300'
                   }
                   bg-white
                 `}
@@ -76,7 +76,7 @@ export default function Header() {
                 {/* AI 아이콘 */}
                 <div className="pl-4 pr-2">
                   <svg 
-                    className={`w-5 h-5 transition-colors ${isFocused ? 'text-ai-primary' : 'text-gray-400'}`}
+                    className={`w-5 h-5 transition-colors ${isFocused ? 'text-gray-600' : 'text-gray-400'}`}
                     fill="none" 
                     viewBox="0 0 24 24" 
                     stroke="currentColor"
