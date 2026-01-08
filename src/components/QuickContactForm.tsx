@@ -45,19 +45,21 @@ export default function QuickContactForm() {
     setError('');
 
     try {
+      // Formspree를 사용한 폼 제출
+      const formData = new FormData();
+      formData.append('name', '홈페이지 빠른 문의');
+      formData.append('email', email || 'anonymous@gumodura.com');
+      formData.append('message', `[기능 요청]\n${message}`);
+      formData.append('language', language);
+      formData.append('source', 'home-quick-contact');
+      formData.append('_subject', `[Gumodura] 새로운 기능 요청`);
+
       const response = await fetch('https://formspree.io/f/xvgzjzbz', {
         method: 'POST',
+        body: formData,
         headers: {
-          'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
-        body: JSON.stringify({
-          name: '홈페이지 빠른 문의',
-          email: email || 'noreply@gumodura.com',
-          message: `[기능 요청]\n${message}`,
-          language: language,
-          timestamp: new Date().toISOString(),
-          source: 'home-quick-contact',
-        }),
       });
 
       if (response.ok) {
@@ -66,6 +68,8 @@ export default function QuickContactForm() {
         setEmail('');
         setTimeout(() => setSubmitted(false), 5000);
       } else {
+        const data = await response.json();
+        console.error('Formspree error:', data);
         setError(errorMessage);
       }
     } catch (err) {

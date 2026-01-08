@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { CategoryMeta, Tool } from '@/lib/types';
+import { useLanguage } from '@/components/LanguageProvider';
+import { useTranslatedTexts } from '@/lib/use-translations';
 
 interface CategoryCardExpandedProps {
   category: CategoryMeta;
@@ -18,6 +20,20 @@ interface CategoryCardExpandedProps {
  */
 export default function CategoryCardExpanded({ category, tools }: CategoryCardExpandedProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const { language } = useLanguage();
+  
+  // 번역 텍스트
+  const [
+    t_tools,
+    t_popular,
+    t_collapse,
+    t_showMore,
+  ] = useTranslatedTexts([
+    '개 도구',
+    '인기',
+    '접기',
+    '개 더보기',
+  ]);
 
   // 인기순 정렬 (isPopular > isNew > 일반)
   const sortedTools = [...tools].sort((a, b) => {
@@ -31,6 +47,15 @@ export default function CategoryCardExpanded({ category, tools }: CategoryCardEx
   const previewTools = sortedTools.slice(0, 3);
   const remainingTools = sortedTools.slice(3);
   const hasMoreTools = remainingTools.length > 0;
+
+  // 언어에 따른 이름 선택
+  const getCategoryName = () => {
+    return language === 'ko' ? category.name_ko : category.name_en;
+  };
+
+  const getToolName = (tool: Tool) => {
+    return language === 'ko' ? tool.name_ko : tool.name_en;
+  };
 
   return (
     <div className="bg-white rounded-2xl border-2 border-gray-100 hover:border-ai-primary-light transition-all duration-200 overflow-hidden">
@@ -53,10 +78,10 @@ export default function CategoryCardExpanded({ category, tools }: CategoryCardEx
           {/* 이름 + 개수 */}
           <div className="flex-1 min-w-0">
             <h3 className="text-lg sm:text-xl font-bold text-gray-800 truncate">
-              {category.name_ko}
+              {getCategoryName()}
             </h3>
             <p className="text-sm text-gray-500">
-              {tools.length}개 도구
+              {tools.length}{t_tools}
             </p>
           </div>
 
@@ -74,8 +99,10 @@ export default function CategoryCardExpanded({ category, tools }: CategoryCardEx
             {previewTools.map((tool, index) => (
               <ToolPreviewItem 
                 key={tool.id} 
-                tool={tool} 
+                tool={tool}
+                toolName={getToolName(tool)}
                 isFirst={index === 0}
+                popularLabel={t_popular}
               />
             ))}
           </div>
@@ -96,8 +123,10 @@ export default function CategoryCardExpanded({ category, tools }: CategoryCardEx
               {remainingTools.map((tool) => (
                 <ToolPreviewItem 
                   key={tool.id} 
-                  tool={tool} 
+                  tool={tool}
+                  toolName={getToolName(tool)}
                   isFirst={false}
+                  popularLabel={t_popular}
                 />
               ))}
             </div>
@@ -111,7 +140,7 @@ export default function CategoryCardExpanded({ category, tools }: CategoryCardEx
             }}
             className="w-full py-3 px-4 bg-gray-50 hover:bg-gray-100 transition-colors border-t border-gray-100 flex items-center justify-center gap-2 text-sm font-medium text-gray-600"
           >
-            <span>{isExpanded ? '접기' : `+${remainingTools.length}개 더보기`}</span>
+            <span>{isExpanded ? t_collapse : `+${remainingTools.length}${t_showMore}`}</span>
             <svg 
               className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
               fill="none" 
@@ -130,7 +159,17 @@ export default function CategoryCardExpanded({ category, tools }: CategoryCardEx
 /**
  * 도구 미리보기 아이템
  */
-function ToolPreviewItem({ tool, isFirst }: { tool: Tool; isFirst: boolean }) {
+function ToolPreviewItem({ 
+  tool, 
+  toolName,
+  isFirst,
+  popularLabel,
+}: { 
+  tool: Tool; 
+  toolName: string;
+  isFirst: boolean;
+  popularLabel: string;
+}) {
   return (
     <Link
       href={`${tool.route}`}
@@ -152,14 +191,14 @@ function ToolPreviewItem({ tool, isFirst }: { tool: Tool; isFirst: boolean }) {
         flex-1 truncate text-sm sm:text-base
         ${isFirst ? 'font-semibold text-gray-800' : 'text-gray-700'}
       `}>
-        {tool.name_ko}
+        {toolName}
       </span>
 
       {/* 뱃지 */}
       <div className="flex items-center gap-1.5 flex-shrink-0">
         {isFirst && (
           <span className="px-2 py-0.5 text-xs font-bold bg-ai-primary text-white rounded-full">
-            인기
+            {popularLabel}
           </span>
         )}
         {tool.isNew && !isFirst && (

@@ -13,7 +13,9 @@ export const TOOLS_REGISTRY: Tool[] = [
   {
     id: 'images-to-pdf',
     name_ko: '이미지 → PDF 만들기',
+    name_en: 'Images to PDF',
     description_ko: '여러 장의 이미지를 하나의 PDF 파일로 합쳐요',
+    description_en: 'Combine multiple images into a single PDF file',
     category: 'file',
     keywords: [
       '이미지', '사진', 'PDF', '피디에프', '합치기', '변환',
@@ -30,7 +32,9 @@ export const TOOLS_REGISTRY: Tool[] = [
   {
     id: 'qr-generator',
     name_ko: '예쁜 QR 코드 만들기',
+    name_en: 'Create Pretty QR Code',
     description_ko: '다양한 스타일의 QR 코드를 만들어요',
+    description_en: 'Create QR codes in various styles',
     category: 'qr',
     keywords: [
       'QR', 'QR코드', '큐알', '큐알코드', '생성', '만들기',
@@ -47,7 +51,9 @@ export const TOOLS_REGISTRY: Tool[] = [
   {
     id: 'image-resize',
     name_ko: '이미지 크기 조절',
+    name_en: 'Image Resize',
     description_ko: '이미지 크기를 원하는 대로 바꿔요',
+    description_en: 'Resize images to your desired dimensions',
     category: 'image',
     keywords: [
       '이미지', '사진', '크기', '조절', '리사이즈', 'resize',
@@ -60,7 +66,9 @@ export const TOOLS_REGISTRY: Tool[] = [
   {
     id: 'image-compress',
     name_ko: '이미지 용량 줄이기',
+    name_en: 'Image Compress',
     description_ko: '이미지 파일 용량을 줄여요',
+    description_en: 'Reduce image file size',
     category: 'image',
     keywords: [
       '이미지', '사진', '용량', '줄이기', '압축', '최적화',
@@ -74,7 +82,9 @@ export const TOOLS_REGISTRY: Tool[] = [
   {
     id: 'text-counter',
     name_ko: '글자 수 세기',
+    name_en: 'Character Counter',
     description_ko: '글자, 단어, 문장 수를 세어요',
+    description_en: 'Count characters, words, and sentences',
     category: 'text',
     keywords: [
       '글자', '문자', '단어', '수', '세기', '카운트', 'count',
@@ -88,7 +98,9 @@ export const TOOLS_REGISTRY: Tool[] = [
   {
     id: 'unit-converter',
     name_ko: '단위 변환기',
+    name_en: 'Unit Converter',
     description_ko: '길이, 무게, 온도 등 단위를 변환해요',
+    description_en: 'Convert length, weight, temperature and more',
     category: 'calc',
     keywords: [
       '단위', '변환', 'cm', 'inch', 'kg', 'lb', '섭씨', '화씨',
@@ -102,7 +114,9 @@ export const TOOLS_REGISTRY: Tool[] = [
   {
     id: 'timer',
     name_ko: '타이머',
+    name_en: 'Timer',
     description_ko: '시간을 설정하고 알림 받아요',
+    description_en: 'Set a timer and get notified',
     category: 'life',
     keywords: [
       '타이머', '시간', '알람', '알림', 'timer', '초시계',
@@ -116,7 +130,9 @@ export const TOOLS_REGISTRY: Tool[] = [
   {
     id: 'random-picker',
     name_ko: '랜덤 뽑기',
+    name_en: 'Random Picker',
     description_ko: '목록에서 무작위로 하나를 뽑아요',
+    description_en: 'Randomly pick one from a list',
     category: 'fun',
     keywords: [
       '랜덤', '무작위', '뽑기', '추첨', '제비뽑기', 'random',
@@ -130,7 +146,9 @@ export const TOOLS_REGISTRY: Tool[] = [
   {
     id: 'salary-calculator',
     name_ko: '연봉 실수령액 계산기',
+    name_en: 'Salary Calculator',
     description_ko: '4대보험 공제 후 월 실수령액을 계산해요',
+    description_en: 'Calculate take-home pay after deductions',
     category: 'finance',
     keywords: [
       '연봉', '실수령액', '월급', '세금', '4대보험', '국민연금',
@@ -145,7 +163,9 @@ export const TOOLS_REGISTRY: Tool[] = [
   {
     id: 'stock-average',
     name_ko: '주식 물타기 계산기',
+    name_en: 'Stock Average Calculator',
     description_ko: '평균 매수 단가를 계산해요',
+    description_en: 'Calculate average stock purchase price',
     category: 'finance',
     keywords: [
       '주식', '물타기', '평균단가', '평단가', '매수', '주식계산기',
@@ -158,7 +178,9 @@ export const TOOLS_REGISTRY: Tool[] = [
   {
     id: 'vat-calculator',
     name_ko: '부가세 계산기',
+    name_en: 'VAT Calculator',
     description_ko: '공급가액과 부가세를 분리 계산해요',
+    description_en: 'Calculate VAT and supply amount',
     category: 'finance',
     keywords: [
       '부가세', '부가가치세', 'VAT', '공급가액', '세금', '세금계산서',
@@ -171,7 +193,9 @@ export const TOOLS_REGISTRY: Tool[] = [
   {
     id: 'percent-calculator',
     name_ko: '퍼센트 계산기',
+    name_en: 'Percent Calculator',
     description_ko: '다양한 퍼센트 계산을 해요',
+    description_en: 'Various percentage calculations',
     category: 'finance',
     keywords: [
       '퍼센트', '비율', '%', '할인', '증가율', '변화율',
@@ -186,7 +210,9 @@ export const TOOLS_REGISTRY: Tool[] = [
   {
     id: 'pdf-merge',
     name_ko: 'PDF 합치기',
+    name_en: 'Merge PDFs',
     description_ko: '여러 개의 PDF 파일을 하나로 합쳐요',
+    description_en: 'Combine multiple PDF files into one',
     category: 'file',
     keywords: [
       'PDF', '합치기', '병합', '결합', '피디에프', '파일합치기',
@@ -201,7 +227,9 @@ export const TOOLS_REGISTRY: Tool[] = [
   {
     id: 'lunar-solar',
     name_ko: '음력/양력 변환기',
+    name_en: 'Lunar/Solar Converter',
     description_ko: '음력과 양력 날짜를 변환하고 간지를 확인해요',
+    description_en: 'Convert between lunar and solar calendar dates',
     category: 'life',
     keywords: [
       '음력', '양력', '변환', '달력', '간지', '띠', '생일',
@@ -214,7 +242,9 @@ export const TOOLS_REGISTRY: Tool[] = [
   {
     id: 'military-discharge',
     name_ko: '전역일 계산기',
+    name_en: 'Military Discharge Calculator',
     description_ko: '군 전역일과 복무 진행률을 계산해요',
+    description_en: 'Calculate military discharge date and progress',
     category: 'life',
     keywords: [
       '전역일', '군대', '복무', '병역', '군복무', '전역',
@@ -229,7 +259,9 @@ export const TOOLS_REGISTRY: Tool[] = [
   {
     id: 'age-calculator',
     name_ko: '만 나이 계산기',
+    name_en: 'Age Calculator',
     description_ko: '만 나이와 한국식 나이를 계산해요',
+    description_en: 'Calculate international age and Korean age',
     category: 'life',
     keywords: [
       '만나이', '나이', '세', '생일', '나이계산', '만나이계산',
@@ -242,7 +274,9 @@ export const TOOLS_REGISTRY: Tool[] = [
   {
     id: 'my-ip',
     name_ko: '내 아이피 확인',
+    name_en: 'My IP Address',
     description_ko: '현재 접속한 공인 IP 주소를 확인해요',
+    description_en: 'Check your public IP address',
     category: 'life',
     keywords: [
       'IP', '아이피', '공인IP', 'IP주소', '내아이피', 'myip',
@@ -255,7 +289,9 @@ export const TOOLS_REGISTRY: Tool[] = [
   {
     id: 'postcode',
     name_ko: '우편번호 찾기',
+    name_en: 'Postal Code Finder',
     description_ko: '주소 검색으로 우편번호를 찾아요',
+    description_en: 'Find postal codes by address search',
     category: 'life',
     keywords: [
       '우편번호', '주소', '도로명주소', '지번주소', '우편번호찾기',
@@ -270,7 +306,9 @@ export const TOOLS_REGISTRY: Tool[] = [
   {
     id: 'background-remover',
     name_ko: '이미지 배경 제거',
+    name_en: 'Background Remover',
     description_ko: '이미지에서 배경을 자동으로 제거해요',
+    description_en: 'Automatically remove image backgrounds',
     category: 'image',
     keywords: [
       '배경제거', '배경', '누끼', '투명배경', '포토샵',
@@ -283,7 +321,9 @@ export const TOOLS_REGISTRY: Tool[] = [
   {
     id: 'youtube-thumbnail',
     name_ko: '유튜브 썸네일 다운로드',
+    name_en: 'YouTube Thumbnail Download',
     description_ko: 'YouTube 영상의 썸네일 이미지를 다운로드해요',
+    description_en: 'Download thumbnail images from YouTube videos',
     category: 'image',
     keywords: [
       '유튜브', '썸네일', 'YouTube', '유튜브썸네일', '썸네일추출',
@@ -299,7 +339,9 @@ export const TOOLS_REGISTRY: Tool[] = [
   {
     id: 'bmi-calculator',
     name_ko: 'BMI 계산기',
+    name_en: 'BMI Calculator',
     description_ko: '체질량지수(BMI)와 비만도를 확인해요',
+    description_en: 'Calculate Body Mass Index (BMI)',
     category: 'health',
     keywords: [
       'BMI', '체질량지수', '비만', '체중', '키', '비만도',
@@ -312,7 +354,9 @@ export const TOOLS_REGISTRY: Tool[] = [
   {
     id: 'pet-calorie',
     name_ko: '반려동물 칼로리 계산기',
+    name_en: 'Pet Calorie Calculator',
     description_ko: '강아지/고양이 1일 권장 칼로리를 계산해요',
+    description_en: 'Calculate daily calorie needs for dogs and cats',
     category: 'health',
     keywords: [
       '반려동물', '강아지', '고양이', '칼로리', '사료', '급여량',
@@ -327,7 +371,9 @@ export const TOOLS_REGISTRY: Tool[] = [
   {
     id: 'lunch-menu',
     name_ko: '점심 메뉴 추천',
+    name_en: 'Lunch Menu Picker',
     description_ko: '오늘 점심 뭐 먹지? 랜덤으로 추천받아요',
+    description_en: 'Get random lunch menu recommendations',
     category: 'fun',
     keywords: [
       '점심', '메뉴', '추천', '뭐먹지', '랜덤', '룰렛',
@@ -341,7 +387,9 @@ export const TOOLS_REGISTRY: Tool[] = [
   {
     id: 'ladder-game',
     name_ko: '사다리 타기',
+    name_en: 'Ladder Game',
     description_ko: '사다리 게임으로 당첨자를 정해요',
+    description_en: 'Play ladder game to decide winners',
     category: 'fun',
     keywords: [
       '사다리', '제비뽑기', '게임', '추첨', '당첨', '사다리타기',

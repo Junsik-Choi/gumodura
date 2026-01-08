@@ -19,7 +19,9 @@ export type ToolCategory =
 export interface CategoryMeta {
   id: ToolCategory;
   name_ko: string;
+  name_en: string;
   description_ko: string;
+  description_en: string;
   icon: string;
   color: string;
 }
@@ -28,7 +30,9 @@ export interface CategoryMeta {
 export interface Tool {
   id: string;
   name_ko: string;
+  name_en: string;
   description_ko: string;
+  description_en: string;
   category: ToolCategory;
   keywords: string[];
   route: string;
