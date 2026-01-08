@@ -244,27 +244,47 @@ export default function LunchMenuPicker() {
         </div>
       )}
 
-      {/* 다시 뽑기 / 다른 메뉴 */}
+      {/* 다시 뽑기 / 맛집 찾기 */}
       {result && !isSpinning && (
-        <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-3">
           <button
             onClick={pickMenu}
-            className="py-4 bg-white border-2 border-ai-primary text-ai-primary rounded-xl font-bold hover:bg-ai-primary/5 transition-colors"
+            className="w-full py-4 bg-white border-2 border-ai-primary text-ai-primary rounded-xl font-bold hover:bg-ai-primary/5 transition-colors"
           >
             🔄 다시 뽑기
           </button>
-          <button
-            onClick={() => {
-              const menu = result;
-              window.open(
-                `https://map.naver.com/v5/search/${encodeURIComponent(menu)}`,
-                '_blank'
-              );
-            }}
-            className="py-4 bg-green-500 text-white rounded-xl font-bold hover:bg-green-600 transition-colors"
-          >
-            📍 주변 맛집 찾기
-          </button>
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              onClick={() => {
+                const menu = result;
+                window.open(
+                  `https://map.naver.com/v5/search/${encodeURIComponent(menu + ' 맛집')}`,
+                  '_blank'
+                );
+              }}
+              className="py-3 bg-green-500 text-white rounded-xl font-bold hover:bg-green-600 transition-colors flex items-center justify-center gap-2"
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C7.03 2 3 6.03 3 11c0 4.17 2.77 7.7 6.57 8.85L12 22l2.43-2.15C18.23 18.7 21 15.17 21 11c0-4.97-4.03-9-9-9zm0 12c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/>
+              </svg>
+              네이버 지도
+            </button>
+            <button
+              onClick={() => {
+                const menu = result;
+                window.open(
+                  `https://www.google.com/maps/search/${encodeURIComponent(menu + ' 맛집')}`,
+                  '_blank'
+                );
+              }}
+              className="py-3 bg-blue-500 text-white rounded-xl font-bold hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+              </svg>
+              구글 지도
+            </button>
+          </div>
         </div>
       )}
 
