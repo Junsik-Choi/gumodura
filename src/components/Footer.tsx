@@ -1,8 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
-import { Language, SUPPORTED_LANGUAGES, t, detectUserLanguage } from '@/lib/i18n';
+import { useTranslatedTexts } from '@/lib/use-translations';
 
 /**
  * 푸터 컴포넌트
@@ -11,11 +10,19 @@ import { Language, SUPPORTED_LANGUAGES, t, detectUserLanguage } from '@/lib/i18n
  * - 언어 선택
  */
 export default function Footer() {
-  const [language, setLanguage] = useState<Language>('ko');
-
-  useEffect(() => {
-    detectUserLanguage().then(setLanguage);
-  }, []);
+  const [
+    headerTitle,
+    copyrightLabel,
+    termsLabel,
+    privacyLabel,
+    contactLabel,
+  ] = useTranslatedTexts([
+    '그 뭐더라',
+    '모든 권리 보유',
+    '이용약관',
+    '개인정보처리방침',
+    '문의하기',
+  ]);
 
   return (
     <footer className="bg-gray-50 border-t border-gray-200 mt-auto">
@@ -25,36 +32,11 @@ export default function Footer() {
           <div className="flex items-center gap-2">
             <span className="text-2xl">🔮</span>
             <div>
-              <span className="text-lg font-bold text-gray-700 block">{t('header.title', language)}</span>
+              <span className="text-lg font-bold text-gray-700 block">{headerTitle}</span>
               <span className="text-gray-500 text-sm">
-                © {new Date().getFullYear()} {t('footer.copyright', language)}
+                © {new Date().getFullYear()} {copyrightLabel}
               </span>
             </div>
-          </div>
-
-          {/* 언어 선택 */}
-          <div className="flex flex-wrap gap-2 items-center justify-start sm:justify-end">
-            {(Object.entries(SUPPORTED_LANGUAGES) as [Language, typeof SUPPORTED_LANGUAGES['ko']][]).map(
-              ([lang, { flag, name }]) => (
-                <button
-                  key={lang}
-                  onClick={() => {
-                    setLanguage(lang);
-                    localStorage.setItem('language', lang);
-                  }}
-                  title={name}
-                  className={`
-                    text-xl px-2 py-1 rounded transition-all text-sm sm:text-base
-                    ${language === lang 
-                      ? 'bg-ai-primary/20 ring-2 ring-ai-primary' 
-                      : 'hover:bg-gray-200'
-                    }
-                  `}
-                >
-                  {flag}
-                </button>
-              )
-            )}
           </div>
         </div>
 
@@ -64,21 +46,21 @@ export default function Footer() {
             href="/terms" 
             className="text-gray-600 hover:text-ai-primary transition-colors font-medium"
           >
-            {t('footer.termsOfService', language)}
+            {termsLabel}
           </Link>
           <span className="hidden sm:block text-gray-300">|</span>
           <Link 
             href="/privacy" 
             className="text-gray-600 hover:text-ai-primary transition-colors font-medium"
           >
-            {t('footer.privacyPolicy', language)}
+            {privacyLabel}
           </Link>
           <span className="hidden sm:block text-gray-300">|</span>
           <Link 
             href="/contact" 
             className="text-gray-600 hover:text-ai-primary transition-colors font-medium"
           >
-            {t('footer.contact', language)}
+            {contactLabel}
           </Link>
         </nav>
       </div>

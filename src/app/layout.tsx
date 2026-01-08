@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { LanguageProvider } from '@/components/LanguageProvider';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -39,11 +40,13 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>
       <body className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1 pt-14 sm:pt-20">
-          {children}
-        </main>
-        <Footer />
+        <LanguageProvider>
+          <Header />
+          <main className="flex-1 pt-14 sm:pt-20">
+            {children}
+          </main>
+          <Footer />
+        </LanguageProvider>
       </body>
     </html>
   );

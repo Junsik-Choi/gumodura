@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import ToolCard from '@/components/ToolCard';
+import TranslatedText from '@/components/TranslatedText';
 import { CATEGORIES, getCategoryMeta } from '@/lib/categories';
 import { getToolsByCategory } from '@/lib/registry';
 import { ToolCategory } from '@/lib/types';
@@ -33,7 +34,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
-          홈으로
+          <TranslatedText text="홈으로" />
         </Link>
         
         <div className="flex items-center gap-4">
@@ -41,12 +42,16 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             <span className="text-4xl">{category.icon}</span>
           </div>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">
-              {category.name_ko}
-            </h1>
-            <p className="text-lg text-gray-600">
-              {category.description_ko}
-            </p>
+            <TranslatedText
+              as="h1"
+              className="text-2xl sm:text-3xl font-bold text-gray-800"
+              text={category.name_ko}
+            />
+            <TranslatedText
+              as="p"
+              className="text-lg text-gray-600"
+              text={category.description_ko}
+            />
           </div>
         </div>
       </header>
@@ -61,12 +66,16 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       ) : (
         <div className="text-center py-16 bg-gray-50 rounded-3xl">
           <div className="text-5xl mb-4">🔧</div>
-          <h2 className="text-xl font-bold text-gray-800 mb-2">
-            아직 준비 중이에요
-          </h2>
-          <p className="text-gray-600">
-            이 카테고리의 도구를 열심히 준비하고 있어요!
-          </p>
+          <TranslatedText
+            as="h2"
+            className="text-xl font-bold text-gray-800 mb-2"
+            text="아직 준비 중이에요"
+          />
+          <TranslatedText
+            as="p"
+            className="text-gray-600"
+            text="이 카테고리의 도구를 열심히 준비하고 있어요!"
+          />
         </div>
       )}
     </div>
