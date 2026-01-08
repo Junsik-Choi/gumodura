@@ -290,7 +290,7 @@ export default function LunchMenuPicker() {
         <h3 className="font-bold text-yellow-800 mb-2">💡 사용 팁</h3>
         <ul className="text-sm text-yellow-700 space-y-1">
           <li>• 먹고 싶은 카테고리만 선택해서 뽑아보세요</li>
-          <li>• "주변 맛집 찾기" 버튼으로 바로 검색할 수 있어요</li>
+          <li>• &ldquo;주변 맛집 찾기&rdquo; 버튼으로 바로 검색할 수 있어요</li>
           <li>• 친구들과 함께 뽑으면 더 재미있어요!</li>
           <li>• 계속 다시 뽑지 말고 처음 나온 걸로 도전해보세요 😄</li>
         </ul>

@@ -363,7 +363,7 @@ export default function LadderGame() {
         <ul className="text-sm text-yellow-700 space-y-1">
           <li>• 2~10명까지 참가 가능해요</li>
           <li>• 결과를 원하는 대로 자유롭게 수정하세요</li>
-          <li>• "섞기" 버튼으로 결과 순서를 랜덤으로 바꿀 수 있어요</li>
+          <li>• &ldquo;섞기&rdquo; 버튼으로 결과 순서를 랜덤으로 바꿀 수 있어요</li>
           <li>• 야유회, 내기, 순서 정하기 등에 활용해보세요!</li>
         </ul>
       </div>
