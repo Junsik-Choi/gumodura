@@ -2,6 +2,12 @@ import { notFound } from 'next/navigation';
 import { getToolById } from '@/lib/registry';
 import ImagesToPdf from '@/components/tools/ImagesToPdf';
 import QrGenerator from '@/components/tools/QrGenerator';
+import ImageResize from '@/components/tools/ImageResize';
+import ImageCompress from '@/components/tools/ImageCompress';
+import TextCounter from '@/components/tools/TextCounter';
+import UnitConverter from '@/components/tools/UnitConverter';
+import Timer from '@/components/tools/Timer';
+import RandomPicker from '@/components/tools/RandomPicker';
 import ComingSoon from '@/components/tools/ComingSoon';
 
 interface ToolPageProps {
@@ -22,6 +28,12 @@ interface ToolPageProps {
 const toolComponents: Record<string, React.ComponentType> = {
   'images-to-pdf': ImagesToPdf,
   'qr-generator': QrGenerator,
+  'image-resize': ImageResize,
+  'image-compress': ImageCompress,
+  'text-counter': TextCounter,
+  'unit-converter': UnitConverter,
+  'timer': Timer,
+  'random-picker': RandomPicker,
   // 새 도구 추가 시 여기에 매핑
 };
 
