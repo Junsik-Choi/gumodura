@@ -1,5 +1,8 @@
+'use client';
+
 import Link from 'next/link';
 import { CategoryMeta } from '@/lib/types';
+import { useTranslatedTexts } from '@/lib/use-translations';
 
 interface CategoryCardProps {
   category: CategoryMeta;
@@ -13,6 +16,12 @@ interface CategoryCardProps {
  * - 모바일 최적화
  */
 export default function CategoryCard({ category, toolCount }: CategoryCardProps) {
+  const [name, description, toolCountLabel] = useTranslatedTexts([
+    category.name_ko,
+    category.description_ko,
+    `${toolCount}개 도구`,
+  ]);
+
   return (
     <Link
       href={`/category/${category.id}/`}
@@ -37,17 +46,17 @@ export default function CategoryCard({ category, toolCount }: CategoryCardProps)
 
       {/* 이름 */}
       <h3 className="text-base sm:text-2xl font-bold text-gray-800 mb-1 sm:mb-2">
-        {category.name_ko}
+        {name}
       </h3>
 
       {/* 설명 */}
       <p className="text-sm sm:text-base text-gray-600 mb-2 sm:mb-3 line-clamp-1 sm:line-clamp-none">
-        {category.description_ko}
+        {description}
       </p>
 
       {/* 도구 개수 */}
       <span className="inline-flex items-center text-xs sm:text-sm font-medium text-ai-primary">
-        {toolCount}개 도구
+        {toolCountLabel}
         <svg className="w-3 h-3 sm:w-4 sm:h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
         </svg>
