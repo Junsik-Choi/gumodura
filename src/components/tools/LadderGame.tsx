@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useRef, useEffect } from 'react';
+import { useTranslatedTexts } from '@/lib/use-translations';
 
 interface Participant {
   name: string;
@@ -18,13 +19,64 @@ const COLORS = [
   '#EC4899', '#06B6D4', '#84CC16', '#F97316', '#6366F1',
 ];
 
+const KOREAN_TEXTS = [
+  '참가자1',          // 0
+  '참가자2',          // 1
+  '참가자3',          // 2
+  '참가자',           // 3
+  '당첨!',            // 4
+  '꽝',               // 5
+  '👥 참가자 설정',    // 6
+  '+ 추가',           // 7
+  '🎁 결과 설정',     // 8
+  '🔀 섞기',          // 9
+  '결과',             // 10
+  '💡 당첨, 꽝, 벌칙 등 원하는 결과를 입력하세요', // 11
+  '🎲 사다리 타는 중...', // 12
+  '🎲 사다리 타기 시작!', // 13
+  '🎉 결과 발표!',    // 14
+  '💡 사용 팁',       // 15
+  '• 2~10명까지 참가 가능해요', // 16
+  '• 결과를 원하는 대로 자유롭게 수정하세요', // 17
+  '• "섞기" 버튼으로 결과 순서를 랜덤으로 바꿀 수 있어요', // 18
+  '• 야유회, 내기, 순서 정하기 등에 활용해보세요!', // 19
+  '당첨',             // 20
+] as const;
+
+// Index constants for better readability
+const T = {
+  participant1: 0,
+  participant2: 1,
+  participant3: 2,
+  participantN: 3,
+  win: 4,
+  lose: 5,
+  participantSettings: 6,
+  add: 7,
+  resultSettings: 8,
+  shuffle: 9,
+  resultPlaceholder: 10,
+  resultTip: 11,
+  climbing: 12,
+  start: 13,
+  resultAnnouncement: 14,
+  usageTips: 15,
+  tip1: 16,
+  tip2: 17,
+  tip3: 18,
+  tip4: 19,
+  winWithoutExclamation: 20,
+} as const;
+
 export default function LadderGame() {
+  const t = useTranslatedTexts([...KOREAN_TEXTS]);
+
   const [participants, setParticipants] = useState<Participant[]>([
-    { name: '참가자1', color: COLORS[0] },
-    { name: '참가자2', color: COLORS[1] },
-    { name: '참가자3', color: COLORS[2] },
+    { name: KOREAN_TEXTS[T.participant1], color: COLORS[0] },
+    { name: KOREAN_TEXTS[T.participant2], color: COLORS[1] },
+    { name: KOREAN_TEXTS[T.participant3], color: COLORS[2] },
   ]);
-  const [results, setResults] = useState<string[]>(['당첨!', '꽝', '꽝']);
+  const [results, setResults] = useState<string[]>([KOREAN_TEXTS[T.win], KOREAN_TEXTS[T.lose], KOREAN_TEXTS[T.lose]]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const [ladder, setLadder] = useState<LadderLine[]>([]);
@@ -39,9 +91,9 @@ export default function LadderGame() {
     const newIndex = participants.length;
     setParticipants([
       ...participants,
-      { name: `참가자${newIndex + 1}`, color: COLORS[newIndex % COLORS.length] },
+      { name: `${t[T.participantN]}${newIndex + 1}`, color: COLORS[newIndex % COLORS.length] },
     ]);
-    setResults([...results, '꽝']);
+    setResults([...results, t[T.lose]]);
   };
 
   // 참가자 삭제
@@ -199,13 +251,13 @@ export default function LadderGame() {
       {/* 참가자 설정 */}
       <div className="bg-gray-50 rounded-2xl p-5 space-y-4">
         <div className="flex justify-between items-center">
-          <h3 className="font-bold text-gray-700">👥 참가자 설정</h3>
+          <h3 className="font-bold text-gray-700">{t[T.participantSettings]}</h3>
           <button
             onClick={addParticipant}
             disabled={participants.length >= 10}
             className="px-4 py-2 bg-ai-primary text-white rounded-lg text-sm font-medium disabled:opacity-50"
           >
-            + 추가
+            {t[T.add]}
           </button>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -220,7 +272,7 @@ export default function LadderGame() {
                 value={p.name}
                 onChange={(e) => updateParticipant(index, e.target.value)}
                 className="flex-1 p-2 text-sm border-2 border-gray-200 rounded-lg focus:border-ai-primary focus:outline-none"
-                placeholder={`참가자${index + 1}`}
+                placeholder={`${t[T.participantN]}${index + 1}`}
               />
               {participants.length > 2 && (
                 <button
@@ -238,12 +290,12 @@ export default function LadderGame() {
       {/* 결과 설정 */}
       <div className="bg-gray-50 rounded-2xl p-5 space-y-4">
         <div className="flex justify-between items-center">
-          <h3 className="font-bold text-gray-700">🎁 결과 설정</h3>
+          <h3 className="font-bold text-gray-700">{t[T.resultSettings]}</h3>
           <button
             onClick={shuffleResults}
             className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300"
           >
-            🔀 섞기
+            {t[T.shuffle]}
           </button>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -254,12 +306,12 @@ export default function LadderGame() {
               value={r}
               onChange={(e) => updateResult(index, e.target.value)}
               className="p-2 text-sm text-center border-2 border-gray-200 rounded-lg focus:border-ai-primary focus:outline-none"
-              placeholder={`결과${index + 1}`}
+              placeholder={`${t[T.resultPlaceholder]}${index + 1}`}
             />
           ))}
         </div>
         <p className="text-sm text-gray-500">
-          💡 당첨, 꽝, 벌칙 등 원하는 결과를 입력하세요
+          {t[T.resultTip]}
         </p>
       </div>
 
@@ -304,9 +356,9 @@ export default function LadderGame() {
             >
               <div
                 className={`px-2 py-1 rounded-lg text-sm font-medium ${
-                  r === '당첨!' || r.includes('당첨')
+                  r === t[T.win] || r.includes(t[T.winWithoutExclamation])
                     ? 'bg-yellow-100 text-yellow-800'
-                    : r === '꽝' || r.includes('꽝')
+                    : r === t[T.lose] || r.includes(t[T.lose])
                     ? 'bg-gray-100 text-gray-600'
                     : 'bg-purple-100 text-purple-800'
                 }`}
@@ -328,13 +380,13 @@ export default function LadderGame() {
             : 'bg-gradient-to-r from-ai-primary to-purple-600 text-white hover:scale-[1.02] active:scale-[0.98] shadow-lg'
         }`}
       >
-        {isPlaying ? '🎲 사다리 타는 중...' : '🎲 사다리 타기 시작!'}
+        {isPlaying ? t[T.climbing] : t[T.start]}
       </button>
 
       {/* 결과 표시 */}
       {showResult && (
         <div className="bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl p-5 text-white">
-          <h3 className="text-lg font-bold text-center mb-4">🎉 결과 발표!</h3>
+          <h3 className="text-lg font-bold text-center mb-4">{t[T.resultAnnouncement]}</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {participants.map((p, index) => (
               <div
@@ -359,12 +411,12 @@ export default function LadderGame() {
 
       {/* 사용 팁 */}
       <div className="bg-yellow-50 rounded-xl p-4">
-        <h3 className="font-bold text-yellow-800 mb-2">💡 사용 팁</h3>
+        <h3 className="font-bold text-yellow-800 mb-2">{t[T.usageTips]}</h3>
         <ul className="text-sm text-yellow-700 space-y-1">
-          <li>• 2~10명까지 참가 가능해요</li>
-          <li>• 결과를 원하는 대로 자유롭게 수정하세요</li>
-          <li>• &ldquo;섞기&rdquo; 버튼으로 결과 순서를 랜덤으로 바꿀 수 있어요</li>
-          <li>• 야유회, 내기, 순서 정하기 등에 활용해보세요!</li>
+          <li>{t[T.tip1]}</li>
+          <li>{t[T.tip2]}</li>
+          <li>{t[T.tip3]}</li>
+          <li>{t[T.tip4]}</li>
         </ul>
       </div>
     </div>

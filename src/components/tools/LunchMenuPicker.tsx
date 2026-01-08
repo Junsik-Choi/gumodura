@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { useTranslatedTexts } from '@/lib/use-translations';
 
 interface MenuCategory {
   id: string;
@@ -94,6 +95,50 @@ const MENU_CATEGORIES: MenuCategory[] = [
 ];
 
 export default function LunchMenuPicker() {
+  const texts = useTranslatedTexts([
+    '🏷️ 카테고리 선택',
+    '전체선택',
+    '전체해제',
+    '선택된 카테고리:',
+    '개',
+    '총 메뉴:',
+    '🎰 돌리는 중...',
+    '🎲 점심 메뉴 뽑기!',
+    '🎉 오늘의 점심은!',
+    '맛있게 드세요~ 😋',
+    '🔄 다시 뽑기',
+    '네이버 지도',
+    '구글 지도',
+    '📜 최근 뽑기 기록',
+    '💡 사용 팁',
+    '먹고 싶은 카테고리만 선택해서 뽑아보세요',
+    '"주변 맛집 찾기" 버튼으로 바로 검색할 수 있어요',
+    '친구들과 함께 뽑으면 더 재미있어요!',
+    '계속 다시 뽑지 말고 처음 나온 걸로 도전해보세요 😄',
+  ]);
+
+  const [
+    categorySelectionTitle,
+    selectAllText,
+    deselectAllText,
+    selectedCategoriesLabel,
+    countUnit,
+    totalMenuLabel,
+    spinningText,
+    pickButtonText,
+    resultTitle,
+    enjoyMealText,
+    retryText,
+    naverMapText,
+    googleMapText,
+    historyTitle,
+    tipsTitle,
+    tip1,
+    tip2,
+    tip3,
+    tip4,
+  ] = texts;
+
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(
     new Set(MENU_CATEGORIES.map((c) => c.id))
   );
@@ -164,20 +209,20 @@ export default function LunchMenuPicker() {
       {/* 카테고리 선택 */}
       <div className="bg-gray-50 rounded-2xl p-5">
         <div className="flex justify-between items-center mb-3">
-          <h3 className="font-bold text-gray-700">🏷️ 카테고리 선택</h3>
+          <h3 className="font-bold text-gray-700">{categorySelectionTitle}</h3>
           <div className="space-x-2">
             <button
               onClick={selectAll}
               className="text-sm text-ai-primary hover:underline"
             >
-              전체선택
+              {selectAllText}
             </button>
             <span className="text-gray-300">|</span>
             <button
               onClick={deselectAll}
               className="text-sm text-gray-500 hover:underline"
             >
-              전체해제
+              {deselectAllText}
             </button>
           </div>
         </div>
@@ -197,15 +242,15 @@ export default function LunchMenuPicker() {
           ))}
         </div>
         <p className="text-sm text-gray-500 mt-3">
-          선택된 카테고리:{' '}
+          {selectedCategoriesLabel}{' '}
           <span className="font-medium text-ai-primary">
-            {selectedCategories.size}개
+            {selectedCategories.size}{countUnit}
           </span>
           {' / '}
-          총 메뉴:{' '}
+          {totalMenuLabel}{' '}
           <span className="font-medium">
             {MENU_CATEGORIES.filter((c) => selectedCategories.has(c.id))
-              .reduce((sum, c) => sum + c.menus.length, 0)}개
+              .reduce((sum, c) => sum + c.menus.length, 0)}{countUnit}
           </span>
         </p>
       </div>
@@ -222,7 +267,7 @@ export default function LunchMenuPicker() {
             : 'bg-gradient-to-r from-ai-primary to-purple-600 text-white hover:scale-[1.02] active:scale-[0.98] shadow-lg'
         }`}
       >
-        {isSpinning ? '🎰 돌리는 중...' : '🎲 점심 메뉴 뽑기!'}
+        {isSpinning ? spinningText : pickButtonText}
       </button>
 
       {/* 결과 */}
@@ -233,13 +278,13 @@ export default function LunchMenuPicker() {
           }`}
         >
           <p className="text-lg opacity-90 mb-2">
-            {isSpinning ? '🎰 돌리는 중...' : '🎉 오늘의 점심은!'}
+            {isSpinning ? spinningText : resultTitle}
           </p>
           <p className="text-5xl font-bold mb-2">
             {getMenuEmoji(result)} {result}
           </p>
           {!isSpinning && (
-            <p className="text-sm opacity-80">맛있게 드세요~ 😋</p>
+            <p className="text-sm opacity-80">{enjoyMealText}</p>
           )}
         </div>
       )}
@@ -251,7 +296,7 @@ export default function LunchMenuPicker() {
             onClick={pickMenu}
             className="w-full py-4 bg-white border-2 border-ai-primary text-ai-primary rounded-xl font-bold hover:bg-ai-primary/5 transition-colors"
           >
-            🔄 다시 뽑기
+            {retryText}
           </button>
           <div className="grid grid-cols-2 gap-3">
             <button
@@ -267,7 +312,7 @@ export default function LunchMenuPicker() {
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 2C7.03 2 3 6.03 3 11c0 4.17 2.77 7.7 6.57 8.85L12 22l2.43-2.15C18.23 18.7 21 15.17 21 11c0-4.97-4.03-9-9-9zm0 12c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/>
               </svg>
-              네이버 지도
+              {naverMapText}
             </button>
             <button
               onClick={() => {
@@ -282,7 +327,7 @@ export default function LunchMenuPicker() {
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
               </svg>
-              구글 지도
+              {googleMapText}
             </button>
           </div>
         </div>
@@ -291,7 +336,7 @@ export default function LunchMenuPicker() {
       {/* 최근 뽑기 기록 */}
       {history.length > 0 && (
         <div className="bg-gray-50 rounded-xl p-4">
-          <h3 className="font-bold text-gray-700 mb-3">📜 최근 뽑기 기록</h3>
+          <h3 className="font-bold text-gray-700 mb-3">{historyTitle}</h3>
           <div className="flex flex-wrap gap-2">
             {history.map((menu, index) => (
               <span
@@ -307,12 +352,12 @@ export default function LunchMenuPicker() {
 
       {/* 사용 팁 */}
       <div className="bg-yellow-50 rounded-xl p-4">
-        <h3 className="font-bold text-yellow-800 mb-2">💡 사용 팁</h3>
+        <h3 className="font-bold text-yellow-800 mb-2">{tipsTitle}</h3>
         <ul className="text-sm text-yellow-700 space-y-1">
-          <li>• 먹고 싶은 카테고리만 선택해서 뽑아보세요</li>
-          <li>• &ldquo;주변 맛집 찾기&rdquo; 버튼으로 바로 검색할 수 있어요</li>
-          <li>• 친구들과 함께 뽑으면 더 재미있어요!</li>
-          <li>• 계속 다시 뽑지 말고 처음 나온 걸로 도전해보세요 😄</li>
+          <li>• {tip1}</li>
+          <li>• {tip2}</li>
+          <li>• {tip3}</li>
+          <li>• {tip4}</li>
         </ul>
       </div>
     </div>

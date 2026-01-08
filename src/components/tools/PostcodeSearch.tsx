@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslatedTexts } from '@/lib/use-translations';
 
 declare global {
   interface Window {
@@ -40,6 +41,82 @@ export default function PostcodeSearch() {
   const [result, setResult] = useState<PostcodeResult | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
+
+  const [
+    searchPostcode,
+    loading,
+    clickToSearch,
+    postalCode,
+    copiedText,
+    copy,
+    copyText,
+    addressInfo,
+    roadAddressLabel,
+    jibunAddressLabel,
+    englishAddress,
+    detailInfo,
+    sido,
+    sigungu,
+    bname,
+    addressType,
+    roadType,
+    jibunType,
+    buildingCode,
+    copyFullAddress,
+    searchAgain,
+    searchGuide,
+    searchExample,
+    searchTips,
+    tipRoad,
+    tipRoadSearch,
+    tipBuilding,
+    tipBuildingSearch,
+    tipJibun,
+    tipJibunSearch,
+    tipApartment,
+    tipApartmentSearch,
+    notes,
+    note1,
+    note2,
+    note3,
+  ] = useTranslatedTexts([
+    '🔍 우편번호 검색하기',
+    '⏳ 로딩 중...',
+    '클릭하면 주소 검색 창이 열려요',
+    '📮 우편번호',
+    '✅ 복사됨!',
+    '📋 복사',
+    '복사',
+    '📍 주소 정보',
+    '도로명 주소',
+    '지번 주소',
+    '영문 주소',
+    '📋 상세 정보',
+    '시/도',
+    '시/군/구',
+    '법정동',
+    '주소 타입',
+    '도로명',
+    '지번',
+    '건물코드',
+    '📋 전체 주소 복사',
+    '🔄 다시 검색',
+    '도로명, 지번, 건물명으로 검색할 수 있어요',
+    '예: 판교역로, 삼성동 159, 롯데타워',
+    '💡 검색 팁',
+    '도로명',
+    '으로 검색: 세종대로, 테헤란로',
+    '건물명',
+    '으로 검색: 63빌딩, 코엑스',
+    '지번',
+    '으로 검색: 역삼동 123',
+    '아파트명',
+    '으로 검색: 래미안, 자이',
+    '📌 참고사항',
+    '카카오(다음) 우편번호 서비스를 이용합니다',
+    '2015년 8월부터 시행된 새 우편번호(5자리)가 표시됩니다',
+    '검색 결과는 실시간으로 업데이트됩니다',
+  ]);
 
   useEffect(() => {
     // Daum Postcode API 스크립트 로드
@@ -84,13 +161,13 @@ export default function PostcodeSearch() {
           className="w-full py-6 bg-gradient-to-r from-ai-primary to-purple-600 text-white font-bold text-xl rounded-2xl hover:opacity-90 transition-opacity disabled:opacity-50"
         >
           {isLoaded ? (
-            <>🔍 우편번호 검색하기</>
+            <>{searchPostcode}</>
           ) : (
-            <>⏳ 로딩 중...</>
+            <>{loading}</>
           )}
         </button>
         <p className="text-sm text-gray-500 mt-2">
-          클릭하면 주소 검색 창이 열려요
+          {clickToSearch}
         </p>
       </div>
 
@@ -99,7 +176,7 @@ export default function PostcodeSearch() {
         <div className="space-y-4">
           {/* 우편번호 */}
           <div className="bg-gradient-to-br from-ai-primary to-purple-600 rounded-2xl p-6 text-white text-center">
-            <p className="text-lg opacity-90 mb-2">📮 우편번호</p>
+            <p className="text-lg opacity-90 mb-2">{postalCode}</p>
             <p className="text-5xl font-mono font-bold tracking-wider">
               {result.zonecode}
             </p>
@@ -107,24 +184,24 @@ export default function PostcodeSearch() {
               onClick={() => copyToClipboard(result.zonecode, 'zonecode')}
               className="mt-4 px-6 py-2 bg-white/20 hover:bg-white/30 rounded-xl transition-colors"
             >
-              {copied === 'zonecode' ? '✅ 복사됨!' : '📋 복사'}
+              {copied === 'zonecode' ? copiedText : copy}
             </button>
           </div>
 
           {/* 주소 정보 */}
           <div className="bg-gray-50 rounded-2xl p-5 space-y-4">
-            <h3 className="font-bold text-gray-800">📍 주소 정보</h3>
+            <h3 className="font-bold text-gray-800">{addressInfo}</h3>
 
             {/* 도로명 주소 */}
             {result.roadAddress && (
               <div className="bg-white rounded-xl p-4">
                 <div className="flex justify-between items-start mb-2">
-                  <span className="text-sm text-gray-500">도로명 주소</span>
+                  <span className="text-sm text-gray-500">{roadAddressLabel}</span>
                   <button
                     onClick={() => copyToClipboard(result.roadAddress, 'road')}
                     className="text-sm text-ai-primary hover:underline"
                   >
-                    {copied === 'road' ? '✅ 복사됨!' : '복사'}
+                    {copied === 'road' ? copiedText : copyText}
                   </button>
                 </div>
                 <p className="font-medium text-gray-800">{result.roadAddress}</p>
@@ -138,12 +215,12 @@ export default function PostcodeSearch() {
             {result.jibunAddress && (
               <div className="bg-white rounded-xl p-4">
                 <div className="flex justify-between items-start mb-2">
-                  <span className="text-sm text-gray-500">지번 주소</span>
+                  <span className="text-sm text-gray-500">{jibunAddressLabel}</span>
                   <button
                     onClick={() => copyToClipboard(result.jibunAddress, 'jibun')}
                     className="text-sm text-ai-primary hover:underline"
                   >
-                    {copied === 'jibun' ? '✅ 복사됨!' : '복사'}
+                    {copied === 'jibun' ? copiedText : copyText}
                   </button>
                 </div>
                 <p className="font-medium text-gray-800">{result.jibunAddress}</p>
@@ -154,12 +231,12 @@ export default function PostcodeSearch() {
             {result.addressEnglish && (
               <div className="bg-white rounded-xl p-4">
                 <div className="flex justify-between items-start mb-2">
-                  <span className="text-sm text-gray-500">영문 주소</span>
+                  <span className="text-sm text-gray-500">{englishAddress}</span>
                   <button
                     onClick={() => copyToClipboard(result.addressEnglish, 'english')}
                     className="text-sm text-ai-primary hover:underline"
                   >
-                    {copied === 'english' ? '✅ 복사됨!' : '복사'}
+                    {copied === 'english' ? copiedText : copyText}
                   </button>
                 </div>
                 <p className="font-medium text-gray-800 text-sm">{result.addressEnglish}</p>
@@ -169,29 +246,29 @@ export default function PostcodeSearch() {
 
           {/* 상세 정보 */}
           <div className="bg-gray-50 rounded-xl p-4">
-            <h3 className="font-bold text-gray-700 mb-3">📋 상세 정보</h3>
+            <h3 className="font-bold text-gray-700 mb-3">{detailInfo}</h3>
             <div className="grid grid-cols-2 gap-2 text-sm">
               <div className="bg-white rounded-lg p-3">
-                <p className="text-gray-500">시/도</p>
+                <p className="text-gray-500">{sido}</p>
                 <p className="font-medium">{result.sido}</p>
               </div>
               <div className="bg-white rounded-lg p-3">
-                <p className="text-gray-500">시/군/구</p>
+                <p className="text-gray-500">{sigungu}</p>
                 <p className="font-medium">{result.sigungu}</p>
               </div>
               <div className="bg-white rounded-lg p-3">
-                <p className="text-gray-500">법정동</p>
+                <p className="text-gray-500">{bname}</p>
                 <p className="font-medium">{result.bname || '-'}</p>
               </div>
               <div className="bg-white rounded-lg p-3">
-                <p className="text-gray-500">주소 타입</p>
+                <p className="text-gray-500">{addressType}</p>
                 <p className="font-medium">
-                  {result.addressType === 'R' ? '도로명' : '지번'}
+                  {result.addressType === 'R' ? roadType : jibunType}
                 </p>
               </div>
               {result.buildingCode && (
                 <div className="bg-white rounded-lg p-3 col-span-2">
-                  <p className="text-gray-500">건물코드</p>
+                  <p className="text-gray-500">{buildingCode}</p>
                   <p className="font-mono text-sm">{result.buildingCode}</p>
                 </div>
               )}
@@ -207,13 +284,13 @@ export default function PostcodeSearch() {
               )}
               className="py-3 bg-gray-100 hover:bg-gray-200 rounded-xl font-medium text-gray-700 transition-colors"
             >
-              {copied === 'full' ? '✅ 복사됨!' : '📋 전체 주소 복사'}
+              {copied === 'full' ? copiedText : copyFullAddress}
             </button>
             <button
               onClick={resetSearch}
               className="py-3 bg-gray-100 hover:bg-gray-200 rounded-xl font-medium text-gray-700 transition-colors"
             >
-              🔄 다시 검색
+              {searchAgain}
             </button>
           </div>
         </div>
@@ -224,32 +301,32 @@ export default function PostcodeSearch() {
         <div className="bg-gray-50 rounded-2xl p-8 text-center">
           <p className="text-5xl mb-4">📬</p>
           <p className="text-gray-600 mb-2">
-            도로명, 지번, 건물명으로 검색할 수 있어요
+            {searchGuide}
           </p>
           <p className="text-sm text-gray-400">
-            예: 판교역로, 삼성동 159, 롯데타워
+            {searchExample}
           </p>
         </div>
       )}
 
       {/* 사용 팁 */}
       <div className="bg-blue-50 rounded-xl p-4">
-        <h3 className="font-bold text-blue-800 mb-2">💡 검색 팁</h3>
+        <h3 className="font-bold text-blue-800 mb-2">{searchTips}</h3>
         <ul className="text-sm text-blue-700 space-y-1">
-          <li>• <strong>도로명</strong>으로 검색: 세종대로, 테헤란로</li>
-          <li>• <strong>건물명</strong>으로 검색: 63빌딩, 코엑스</li>
-          <li>• <strong>지번</strong>으로 검색: 역삼동 123</li>
-          <li>• <strong>아파트명</strong>으로 검색: 래미안, 자이</li>
+          <li>• <strong>{tipRoad}</strong>{tipRoadSearch}</li>
+          <li>• <strong>{tipBuilding}</strong>{tipBuildingSearch}</li>
+          <li>• <strong>{tipJibun}</strong>{tipJibunSearch}</li>
+          <li>• <strong>{tipApartment}</strong>{tipApartmentSearch}</li>
         </ul>
       </div>
 
       {/* 안내사항 */}
       <div className="bg-gray-50 rounded-xl p-4">
-        <h3 className="font-bold text-gray-700 mb-2">📌 참고사항</h3>
+        <h3 className="font-bold text-gray-700 mb-2">{notes}</h3>
         <ul className="text-sm text-gray-600 space-y-1">
-          <li>• 카카오(다음) 우편번호 서비스를 이용합니다</li>
-          <li>• 2015년 8월부터 시행된 새 우편번호(5자리)가 표시됩니다</li>
-          <li>• 검색 결과는 실시간으로 업데이트됩니다</li>
+          <li>• {note1}</li>
+          <li>• {note2}</li>
+          <li>• {note3}</li>
         </ul>
       </div>
     </div>

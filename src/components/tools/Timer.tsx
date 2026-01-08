@@ -1,19 +1,77 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useTranslatedTexts } from '@/lib/use-translations';
 
-const PRESETS = [
-  { name: '1분', seconds: 60, icon: '☕' },
-  { name: '3분', seconds: 180, icon: '🍜' },
-  { name: '5분', seconds: 300, icon: '🥚' },
-  { name: '10분', seconds: 600, icon: '📖' },
-  { name: '15분', seconds: 900, icon: '🧘' },
-  { name: '25분', seconds: 1500, icon: '🍅' },
-  { name: '30분', seconds: 1800, icon: '🏃' },
-  { name: '1시간', seconds: 3600, icon: '📚' },
+const PRESET_DATA = [
+  { seconds: 60, icon: '☕' },
+  { seconds: 180, icon: '🍜' },
+  { seconds: 300, icon: '🥚' },
+  { seconds: 600, icon: '📖' },
+  { seconds: 900, icon: '🧘' },
+  { seconds: 1500, icon: '🍅' },
+  { seconds: 1800, icon: '🏃' },
+  { seconds: 3600, icon: '📚' },
 ];
 
 export default function Timer() {
+  const [
+    min1Label,
+    min3Label,
+    min5Label,
+    min10Label,
+    min15Label,
+    min25Label,
+    min30Label,
+    hour1Label,
+    quickSetupLabel,
+    customSetupLabel,
+    minuteLabel,
+    secondLabel,
+    setLabel,
+    timeUpLabel,
+    againLabel,
+    pauseLabel,
+    startLabel,
+    resetLabel,
+    setTimeLabel,
+    elapsedTimeLabel,
+    progressLabel,
+  ] = useTranslatedTexts([
+    '1분',
+    '3분',
+    '5분',
+    '10분',
+    '15분',
+    '25분',
+    '30분',
+    '1시간',
+    '빠른 설정',
+    '직접 설정',
+    '분',
+    '초',
+    '설정',
+    '시간 종료!',
+    '다시',
+    '일시정지',
+    '시작',
+    '리셋',
+    '설정 시간',
+    '경과 시간',
+    '진행률',
+  ]);
+
+  const PRESETS = [
+    { name: min1Label, seconds: 60, icon: '☕' },
+    { name: min3Label, seconds: 180, icon: '🍜' },
+    { name: min5Label, seconds: 300, icon: '🥚' },
+    { name: min10Label, seconds: 600, icon: '📖' },
+    { name: min15Label, seconds: 900, icon: '🧘' },
+    { name: min25Label, seconds: 1500, icon: '🍅' },
+    { name: min30Label, seconds: 1800, icon: '🏃' },
+    { name: hour1Label, seconds: 3600, icon: '📚' },
+  ];
+
   const [totalSeconds, setTotalSeconds] = useState(300); // 기본 5분
   const [remainingSeconds, setRemainingSeconds] = useState(300);
   const [isRunning, setIsRunning] = useState(false);
@@ -138,7 +196,7 @@ export default function Timer() {
     <div className="space-y-6">
       {/* 프리셋 */}
       <div>
-        <p className="font-semibold text-gray-700 mb-3">⏱️ 빠른 설정</p>
+        <p className="font-semibold text-gray-700 mb-3">⏱️ {quickSetupLabel}</p>
         <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
           {PRESETS.map((preset) => (
             <button
@@ -159,13 +217,13 @@ export default function Timer() {
 
       {/* 커스텀 시간 */}
       <div className="bg-gray-50 rounded-xl p-4">
-        <p className="font-medium text-gray-700 mb-3">⚙️ 직접 설정</p>
+        <p className="font-medium text-gray-700 mb-3">⚙️ {customSetupLabel}</p>
         <div className="flex items-center gap-2">
           <input
             type="number"
             value={customMinutes}
             onChange={(e) => setCustomMinutes(e.target.value)}
-            placeholder="분"
+            placeholder={minuteLabel}
             className="w-20 p-3 text-center border-2 border-gray-200 rounded-xl focus:border-ai-primary focus:outline-none"
             min={0}
           />
@@ -174,7 +232,7 @@ export default function Timer() {
             type="number"
             value={customSeconds}
             onChange={(e) => setCustomSeconds(e.target.value)}
-            placeholder="초"
+            placeholder={secondLabel}
             className="w-20 p-3 text-center border-2 border-gray-200 rounded-xl focus:border-ai-primary focus:outline-none"
             min={0}
             max={59}
@@ -183,7 +241,7 @@ export default function Timer() {
             onClick={setCustomTime}
             className="px-4 py-3 bg-ai-primary text-white font-medium rounded-xl hover:bg-ai-primary-dark transition-colors"
           >
-            설정
+            {setLabel}
           </button>
         </div>
       </div>
@@ -208,7 +266,7 @@ export default function Timer() {
           {isFinished && (
             <div className="mt-4 text-white">
               <span className="text-4xl animate-bounce inline-block">🎉</span>
-              <p className="text-xl font-bold mt-2">시간 종료!</p>
+              <p className="text-xl font-bold mt-2">{timeUpLabel}</p>
             </div>
           )}
         </div>
@@ -234,7 +292,7 @@ export default function Timer() {
               : 'bg-ai-primary hover:bg-ai-primary-dark text-white'
           }`}
         >
-          {isFinished ? '⏮️ 다시' : isRunning ? '⏸️ 일시정지' : '▶️ 시작'}
+          {isFinished ? `⏮️ ${againLabel}` : isRunning ? `⏸️ ${pauseLabel}` : `▶️ ${startLabel}`}
         </button>
 
         <button
@@ -242,7 +300,7 @@ export default function Timer() {
           disabled={!isRunning && remainingSeconds === totalSeconds}
           className="px-4 py-3 bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-medium transition-colors"
         >
-          🔄 리셋
+          🔄 {resetLabel}
         </button>
 
         <button
@@ -257,15 +315,15 @@ export default function Timer() {
       {/* 추가 정보 */}
       <div className="grid grid-cols-3 gap-4 text-center">
         <div className="bg-gray-50 rounded-xl p-4">
-          <p className="text-sm text-gray-500">설정 시간</p>
+          <p className="text-sm text-gray-500">{setTimeLabel}</p>
           <p className="text-lg font-bold text-gray-700">{formatTime(totalSeconds)}</p>
         </div>
         <div className="bg-gray-50 rounded-xl p-4">
-          <p className="text-sm text-gray-500">경과 시간</p>
+          <p className="text-sm text-gray-500">{elapsedTimeLabel}</p>
           <p className="text-lg font-bold text-gray-700">{formatTime(totalSeconds - remainingSeconds)}</p>
         </div>
         <div className="bg-gray-50 rounded-xl p-4">
-          <p className="text-sm text-gray-500">진행률</p>
+          <p className="text-sm text-gray-500">{progressLabel}</p>
           <p className="text-lg font-bold text-gray-700">{Math.round(progress)}%</p>
         </div>
       </div>

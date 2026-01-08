@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import { useTranslatedTexts } from '@/lib/use-translations';
 
 // 음력 변환을 위한 데이터 (1900-2100년)
 // 간단한 변환 알고리즘 (정확도를 위해서는 별도 라이브러리 필요)
@@ -162,6 +163,50 @@ export default function LunarSolarConverter() {
   const [lunarDay, setLunarDay] = useState<number>(new Date().getDate());
   const [isLeapMonth, setIsLeapMonth] = useState<boolean>(false);
 
+  const [
+    solarToLunarText,
+    lunarToSolarText,
+    selectSolarDateText,
+    inputLunarDateText,
+    yearText,
+    monthText,
+    dayText,
+    lunarDateText,
+    solarDateText,
+    ganjiText,
+    zodiacText,
+    sexagenaryText,
+    ordinalText,
+    notesText,
+    dateRangeNote,
+    leapMonthNote,
+    ganjiExplanation,
+    leapText,
+    calculateAsText,
+    hasLeapMonthText,
+  ] = useTranslatedTexts([
+    '양력 → 음력',
+    '음력 → 양력',
+    '양력 날짜 선택',
+    '음력 날짜 입력',
+    '년',
+    '월',
+    '일',
+    '음력 날짜',
+    '양력 날짜',
+    '간지',
+    '띠',
+    '60갑자',
+    '번째',
+    '참고사항',
+    '1900년 ~ 2099년 사이의 날짜만 지원해요',
+    '음력 윤달이 있는 해는 자동으로 표시돼요',
+    '천간(갑을병정무기경신임계)과 지지(자축인묘진사오미신유술해)로 60갑자가 구성돼요',
+    '윤',
+    '월로 계산',
+    '이 해에 윤달이 있어요',
+  ]);
+
   const result = useMemo(() => {
     try {
       if (mode === 'solarToLunar') {
@@ -208,7 +253,7 @@ export default function LunarSolarConverter() {
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
-          ☀️ 양력 → 음력
+          ☀️ {solarToLunarText}
         </button>
         <button
           onClick={() => setMode('lunarToSolar')}
@@ -218,7 +263,7 @@ export default function LunarSolarConverter() {
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
-          🌙 음력 → 양력
+          🌙 {lunarToSolarText}
         </button>
       </div>
 
@@ -226,7 +271,7 @@ export default function LunarSolarConverter() {
       {mode === 'solarToLunar' && (
         <div className="bg-gray-50 rounded-2xl p-5">
           <label className="block font-semibold text-gray-700 mb-3">
-            ☀️ 양력 날짜 선택
+            ☀️ {selectSolarDateText}
           </label>
           <input
             type="date"
@@ -243,42 +288,42 @@ export default function LunarSolarConverter() {
       {mode === 'lunarToSolar' && (
         <div className="bg-gray-50 rounded-2xl p-5 space-y-4">
           <label className="block font-semibold text-gray-700 mb-3">
-            🌙 음력 날짜 입력
+            🌙 {inputLunarDateText}
           </label>
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="text-sm text-gray-500 mb-1 block">년</label>
+              <label className="text-sm text-gray-500 mb-1 block">{yearText}</label>
               <select
                 value={lunarYear}
                 onChange={(e) => setLunarYear(parseInt(e.target.value))}
                 className="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-ai-primary focus:outline-none"
               >
                 {Array.from({ length: 200 }, (_, i) => 1900 + i).map((y) => (
-                  <option key={y} value={y}>{y}년</option>
+                  <option key={y} value={y}>{y}{yearText}</option>
                 ))}
               </select>
             </div>
             <div>
-              <label className="text-sm text-gray-500 mb-1 block">월</label>
+              <label className="text-sm text-gray-500 mb-1 block">{monthText}</label>
               <select
                 value={lunarMonth}
                 onChange={(e) => setLunarMonth(parseInt(e.target.value))}
                 className="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-ai-primary focus:outline-none"
               >
                 {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
-                  <option key={m} value={m}>{m}월</option>
+                  <option key={m} value={m}>{m}{monthText}</option>
                 ))}
               </select>
             </div>
             <div>
-              <label className="text-sm text-gray-500 mb-1 block">일</label>
+              <label className="text-sm text-gray-500 mb-1 block">{dayText}</label>
               <select
                 value={lunarDay}
                 onChange={(e) => setLunarDay(parseInt(e.target.value))}
                 className="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-ai-primary focus:outline-none"
               >
                 {Array.from({ length: 30 }, (_, i) => i + 1).map((d) => (
-                  <option key={d} value={d}>{d}일</option>
+                  <option key={d} value={d}>{d}{dayText}</option>
                 ))}
               </select>
             </div>
@@ -293,7 +338,7 @@ export default function LunarSolarConverter() {
                 className="w-5 h-5 rounded"
               />
               <span className="text-yellow-800">
-                윤{leapMonth}월로 계산 (이 해에 윤달이 있어요)
+                {leapText}{leapMonth}{calculateAsText} ({hasLeapMonthText})
               </span>
             </label>
           )}
@@ -306,16 +351,16 @@ export default function LunarSolarConverter() {
           <div className="text-center">
             {result.type === 'lunar' ? (
               <>
-                <p className="text-lg opacity-90 mb-2">🌙 음력 날짜</p>
+                <p className="text-lg opacity-90 mb-2">🌙 {lunarDateText}</p>
                 <p className="text-4xl font-bold">
-                  {result.year}년 {result.isLeap && '윤'}{result.month}월 {result.day}일
+                  {result.year}{yearText} {result.isLeap && leapText}{result.month}{monthText} {result.day}{dayText}
                 </p>
               </>
             ) : (
               <>
-                <p className="text-lg opacity-90 mb-2">☀️ 양력 날짜</p>
+                <p className="text-lg opacity-90 mb-2">☀️ {solarDateText}</p>
                 <p className="text-4xl font-bold">
-                  {result.date.getFullYear()}년 {result.date.getMonth() + 1}월 {result.date.getDate()}일
+                  {result.date.getFullYear()}{yearText} {result.date.getMonth() + 1}{monthText} {result.date.getDate()}{dayText}
                 </p>
               </>
             )}
@@ -324,17 +369,17 @@ export default function LunarSolarConverter() {
           {/* 간지 정보 */}
           <div className="mt-6 pt-4 border-t border-white/20 grid grid-cols-3 gap-4 text-center">
             <div>
-              <p className="text-sm opacity-80">간지</p>
-              <p className="text-xl font-bold">{result.ganZhi.gan}{result.ganZhi.zhi}년</p>
+              <p className="text-sm opacity-80">{ganjiText}</p>
+              <p className="text-xl font-bold">{result.ganZhi.gan}{result.ganZhi.zhi}{yearText}</p>
             </div>
             <div>
-              <p className="text-sm opacity-80">띠</p>
-              <p className="text-xl font-bold">{result.ganZhi.zodiac}띠 🐾</p>
+              <p className="text-sm opacity-80">{zodiacText}</p>
+              <p className="text-xl font-bold">{result.ganZhi.zodiac}{zodiacText} 🐾</p>
             </div>
             <div>
-              <p className="text-sm opacity-80">60갑자</p>
+              <p className="text-sm opacity-80">{sexagenaryText}</p>
               <p className="text-xl font-bold">
-                {HEAVENLY_STEMS.indexOf(result.ganZhi.gan) * 6 + EARTHLY_BRANCHES.indexOf(result.ganZhi.zhi) % 6 + 1}번째
+                {HEAVENLY_STEMS.indexOf(result.ganZhi.gan) * 6 + EARTHLY_BRANCHES.indexOf(result.ganZhi.zhi) % 6 + 1}{ordinalText}
               </p>
             </div>
           </div>
@@ -343,11 +388,11 @@ export default function LunarSolarConverter() {
 
       {/* 안내 */}
       <div className="bg-gray-50 rounded-xl p-4">
-        <h3 className="font-bold text-gray-700 mb-2">💡 참고사항</h3>
+        <h3 className="font-bold text-gray-700 mb-2">💡 {notesText}</h3>
         <ul className="text-sm text-gray-600 space-y-1">
-          <li>• 1900년 ~ 2099년 사이의 날짜만 지원해요</li>
-          <li>• 음력 윤달이 있는 해는 자동으로 표시돼요</li>
-          <li>• 천간(갑을병정무기경신임계)과 지지(자축인묘진사오미신유술해)로 60갑자가 구성돼요</li>
+          <li>• {dateRangeNote}</li>
+          <li>• {leapMonthNote}</li>
+          <li>• {ganjiExplanation}</li>
         </ul>
       </div>
     </div>

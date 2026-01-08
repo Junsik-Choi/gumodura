@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import ProgressIndicator from '@/components/ProgressIndicator';
+import { useTranslatedTexts } from '@/lib/use-translations';
 
 interface ImageFile {
   file: File;
@@ -20,16 +21,74 @@ interface Step {
  * 여러 장의 이미지를 하나의 PDF로 합침
  */
 export default function ImagesToPdf() {
+  const [
+    // Step labels
+    stepImageCheck,
+    stepImageProcess,
+    stepPdfCreate,
+    stepDownloadReady,
+    // Messages
+    checkingImages,
+    processingImages,
+    processingImagesProgress,
+    imageLoadFailed,
+    creatingPdf,
+    downloadReady,
+    completed,
+    errorOccurred,
+    // UI text
+    selectImageFiles,
+    clickOrDrop,
+    supportedFormats,
+    selectedImages,
+    deleteAll,
+    imageLabel,
+    pageNumber,
+    moveUpLabel,
+    moveDownLabel,
+    deleteText,
+    createPdf,
+    sheets,
+  ] = useTranslatedTexts([
+    // Step labels
+    '이미지 확인',
+    '이미지 처리',
+    'PDF 생성',
+    '다운로드 준비',
+    // Messages
+    '개 이미지 확인 중...',
+    '이미지 처리 중...',
+    '이미지 처리 중...',
+    '이미지 로드 실패',
+    'PDF 파일 생성 중...',
+    '다운로드 준비 완료!',
+    '완료! PDF가 다운로드되었습니다.',
+    '오류가 발생했습니다. 다시 시도해주세요.',
+    // UI text
+    '이미지 파일을 선택하세요',
+    '클릭하거나 파일을 끌어다 놓으세요',
+    'JPG, PNG, GIF 등 지원 (여러 장 선택 가능)',
+    '선택된 이미지',
+    '전체 삭제',
+    '이미지',
+    '번째 페이지',
+    '위로',
+    '아래로',
+    '삭제',
+    'PDF 만들기',
+    '장',
+  ]);
+
   const [images, setImages] = useState<ImageFile[]>([]);
   const [processing, setProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
   const [message, setMessage] = useState('');
   const [steps, setSteps] = useState<Step[]>([
-    { id: 'upload', label: '이미지 확인', status: 'pending' },
-    { id: 'process', label: '이미지 처리', status: 'pending' },
-    { id: 'create', label: 'PDF 생성', status: 'pending' },
-    { id: 'download', label: '다운로드 준비', status: 'pending' },
+    { id: 'upload', label: stepImageCheck, status: 'pending' },
+    { id: 'process', label: stepImageProcess, status: 'pending' },
+    { id: 'create', label: stepPdfCreate, status: 'pending' },
+    { id: 'download', label: stepDownloadReady, status: 'pending' },
   ]);
 
   // 파일 선택 처리
@@ -64,7 +123,7 @@ export default function ImagesToPdf() {
   };
 
   // 이미지 순서 변경 (위로)
-  const moveUp = (index: number) => {
+  const handleMoveUp = (index: number) => {
     if (index === 0) return;
     setImages(prev => {
       const newImages = [...prev];
@@ -74,7 +133,7 @@ export default function ImagesToPdf() {
   };
 
   // 이미지 순서 변경 (아래로)
-  const moveDown = (index: number) => {
+  const handleMoveDown = (index: number) => {
     if (index === images.length - 1) return;
     setImages(prev => {
       const newImages = [...prev];
@@ -102,14 +161,14 @@ export default function ImagesToPdf() {
     try {
       // Step 1: 이미지 확인
       updateStep(0, 'in-progress');
-      setMessage(`${images.length}개 이미지 확인 중...`);
+      setMessage(`${images.length}${checkingImages}`);
       await new Promise(r => setTimeout(r, 500));
       setProgress(10);
       updateStep(0, 'completed');
 
       // Step 2: 이미지 처리
       updateStep(1, 'in-progress');
-      setMessage('이미지 처리 중...');
+      setMessage(processingImages);
       
       // jspdf 동적 로드
       const { jsPDF } = await import('jspdf');
@@ -121,7 +180,7 @@ export default function ImagesToPdf() {
 
       // 각 이미지 처리
       for (let i = 0; i < images.length; i++) {
-        setMessage(`이미지 처리 중... (${i + 1}/${images.length})`);
+        setMessage(`${processingImagesProgress} (${i + 1}/${images.length})`);
         
         if (i > 0) {
           pdf.addPage();
@@ -131,7 +190,7 @@ export default function ImagesToPdf() {
         img.src = images[i].preview;
         await new Promise<void>((resolve, reject) => {
           img.onload = () => resolve();
-          img.onerror = () => reject(new Error('이미지 로드 실패'));
+          img.onerror = () => reject(new Error(imageLoadFailed));
         });
 
         // 이미지 비율 계산
@@ -152,25 +211,25 @@ export default function ImagesToPdf() {
 
       // Step 3: PDF 생성
       updateStep(2, 'in-progress');
-      setMessage('PDF 파일 생성 중...');
+      setMessage(creatingPdf);
       setProgress(80);
       await new Promise(r => setTimeout(r, 500));
       updateStep(2, 'completed');
 
       // Step 4: 다운로드
       updateStep(3, 'in-progress');
-      setMessage('다운로드 준비 완료!');
+      setMessage(downloadReady);
       setProgress(100);
       
       const filename = `그뭐더라_이미지PDF_${new Date().toISOString().slice(0, 10)}.pdf`;
       pdf.save(filename);
       
       updateStep(3, 'completed');
-      setMessage('완료! PDF가 다운로드되었습니다.');
+      setMessage(completed);
 
     } catch (error) {
       console.error('PDF 생성 오류:', error);
-      setMessage('오류가 발생했습니다. 다시 시도해주세요.');
+      setMessage(errorOccurred);
       setSteps(prev => prev.map((step, i) => ({
         ...step,
         status: i === currentStep ? 'error' : step.status,
@@ -180,10 +239,10 @@ export default function ImagesToPdf() {
         setProcessing(false);
         setProgress(0);
         setSteps([
-          { id: 'upload', label: '이미지 확인', status: 'pending' },
-          { id: 'process', label: '이미지 처리', status: 'pending' },
-          { id: 'create', label: 'PDF 생성', status: 'pending' },
-          { id: 'download', label: '다운로드 준비', status: 'pending' },
+          { id: 'upload', label: stepImageCheck, status: 'pending' },
+          { id: 'process', label: stepImageProcess, status: 'pending' },
+          { id: 'create', label: stepPdfCreate, status: 'pending' },
+          { id: 'download', label: stepDownloadReady, status: 'pending' },
         ]);
       }, 3000);
     }
@@ -209,13 +268,13 @@ export default function ImagesToPdf() {
             >
               <div className="text-5xl mb-4">📷</div>
               <p className="text-xl font-semibold text-gray-700 mb-2">
-                이미지 파일을 선택하세요
+                {selectImageFiles}
               </p>
               <p className="text-gray-500">
-                클릭하거나 파일을 끌어다 놓으세요
+                {clickOrDrop}
               </p>
               <p className="text-sm text-gray-400 mt-2">
-                JPG, PNG, GIF 등 지원 (여러 장 선택 가능)
+                {supportedFormats}
               </p>
             </label>
           </div>
@@ -225,56 +284,56 @@ export default function ImagesToPdf() {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-gray-700">
-                  선택된 이미지 ({images.length}장)
+                  {selectedImages} ({images.length}{sheets})
                 </h3>
                 <button
                   onClick={() => setImages([])}
                   className="text-red-500 hover:text-red-600 font-medium"
                 >
-                  전체 삭제
+                  {deleteAll}
                 </button>
               </div>
               
               <div className="space-y-3">
-                {images.map((image, index) => (
+                {images.map((img, index) => (
                   <div
-                    key={image.id}
+                    key={img.id}
                     className="flex items-center gap-4 p-3 bg-gray-50 rounded-xl"
                   >
                     {/* 썸네일 */}
                     <img
-                      src={image.preview}
-                      alt={`이미지 ${index + 1}`}
+                      src={img.preview}
+                      alt={`${imageLabel} ${index + 1}`}
                       className="w-16 h-16 object-cover rounded-lg"
                     />
                     
                     {/* 순서 번호 + 파일명 */}
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-gray-800">
-                        {index + 1}번째 페이지
+                        {index + 1}{pageNumber}
                       </p>
                       <p className="text-sm text-gray-500 truncate">
-                        {image.file.name}
+                        {img.file.name}
                       </p>
                     </div>
                     
                     {/* 순서 변경 버튼 */}
                     <div className="flex flex-col gap-1">
                       <button
-                        onClick={() => moveUp(index)}
+                        onClick={() => handleMoveUp(index)}
                         disabled={index === 0}
                         className="p-1 text-gray-500 hover:text-ai-primary disabled:opacity-30"
-                        title="위로"
+                        title={moveUpLabel}
                       >
                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
                         </svg>
                       </button>
                       <button
-                        onClick={() => moveDown(index)}
+                        onClick={() => handleMoveDown(index)}
                         disabled={index === images.length - 1}
                         className="p-1 text-gray-500 hover:text-ai-primary disabled:opacity-30"
-                        title="아래로"
+                        title={moveDownLabel}
                       >
                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -284,9 +343,9 @@ export default function ImagesToPdf() {
                     
                     {/* 삭제 버튼 */}
                     <button
-                      onClick={() => removeImage(image.id)}
+                      onClick={() => removeImage(img.id)}
                       className="p-2 text-red-500 hover:bg-red-50 rounded-lg"
-                      title="삭제"
+                      title={deleteText}
                     >
                       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -304,7 +363,7 @@ export default function ImagesToPdf() {
               onClick={generatePdf}
               className="w-full py-4 bg-ai-primary hover:bg-ai-primary-dark text-white font-bold text-xl rounded-2xl transition-colors"
             >
-              PDF 만들기 ({images.length}장)
+              {createPdf} ({images.length}{sheets})
             </button>
           )}
         </>

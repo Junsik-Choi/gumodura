@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { PDFDocument } from 'pdf-lib';
+import { useTranslatedTexts } from '@/lib/use-translations';
 
 interface PdfFile {
   id: string;
@@ -11,6 +12,56 @@ interface PdfFile {
 }
 
 export default function PdfMerge() {
+  const [
+    pdfOnlyError,
+    fileReadError,
+    minFilesError,
+    mergeError,
+    selectPdfFiles,
+    selectMultipleHint,
+    selectFilesBtn,
+    pdfFileList,
+    countUnit,
+    totalLabel,
+    pageLabel,
+    deleteAll,
+    moveUp,
+    moveDown,
+    deleteBtn,
+    orderHint,
+    mergingProgress,
+    mergeBtn,
+    usageGuide,
+    guideText1,
+    guideText2,
+    guideText3,
+    guideText4,
+  ] = useTranslatedTexts([
+    'PDF 파일만 업로드 가능합니다.',
+    '파일을 읽을 수 없습니다.',
+    '2개 이상의 PDF 파일이 필요합니다.',
+    'PDF 합치기 중 오류가 발생했습니다.',
+    'PDF 파일을 선택하세요',
+    '여러 파일을 한 번에 선택하거나, 하나씩 추가할 수 있어요',
+    '파일 선택',
+    'PDF 파일 목록',
+    '개',
+    '총',
+    '페이지',
+    '전체 삭제',
+    '위로',
+    '아래로',
+    '삭제',
+    '위/아래 버튼으로 순서를 변경할 수 있어요',
+    'PDF 합치는 중...',
+    'PDF 합치기',
+    '사용 안내',
+    '여러 개의 PDF 파일을 하나로 합칠 수 있어요',
+    '파일 순서는 드래그하거나 화살표로 변경 가능해요',
+    '모든 처리는 브라우저에서 진행되어 파일이 서버로 전송되지 않아요',
+    '최대 파일 크기 제한이 없지만, 큰 파일은 시간이 걸릴 수 있어요',
+  ]);
+
   const [pdfFiles, setPdfFiles] = useState<PdfFile[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -26,7 +77,7 @@ export default function PdfMerge() {
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       if (file.type !== 'application/pdf') {
-        setError('PDF 파일만 업로드 가능합니다.');
+        setError(pdfOnlyError);
         continue;
       }
 
@@ -42,13 +93,13 @@ export default function PdfMerge() {
           pageCount,
         });
       } catch {
-        setError(`${file.name} 파일을 읽을 수 없습니다.`);
+        setError(`${file.name} ${fileReadError}`);
       }
     }
 
     setPdfFiles(prev => [...prev, ...newPdfFiles]);
     e.target.value = '';
-  }, []);
+  }, [pdfOnlyError, fileReadError]);
 
   const removeFile = (id: string) => {
     setPdfFiles(prev => prev.filter(f => f.id !== id));
@@ -65,7 +116,7 @@ export default function PdfMerge() {
 
   const mergePdfs = async () => {
     if (pdfFiles.length < 2) {
-      setError('2개 이상의 PDF 파일이 필요합니다.');
+      setError(minFilesError);
       return;
     }
 
@@ -101,7 +152,7 @@ export default function PdfMerge() {
       URL.revokeObjectURL(url);
       setProgress(100);
     } catch {
-      setError('PDF 합치기 중 오류가 발생했습니다.');
+      setError(mergeError);
     } finally {
       setIsProcessing(false);
     }
@@ -128,16 +179,16 @@ export default function PdfMerge() {
         >
           <div className="text-5xl mb-4">📄</div>
           <p className="text-lg font-medium text-gray-700 mb-2">
-            PDF 파일을 선택하세요
+            {selectPdfFiles}
           </p>
           <p className="text-sm text-gray-500">
-            여러 파일을 한 번에 선택하거나, 하나씩 추가할 수 있어요
+            {selectMultipleHint}
           </p>
           <button
             type="button"
             className="mt-4 px-6 py-2 bg-ai-primary text-white rounded-xl hover:bg-ai-primary-dark transition-colors"
           >
-            파일 선택
+            {selectFilesBtn}
           </button>
         </label>
       </div>
@@ -154,13 +205,13 @@ export default function PdfMerge() {
         <div className="space-y-3">
           <div className="flex justify-between items-center">
             <h3 className="font-bold text-gray-800">
-              📚 PDF 파일 목록 ({pdfFiles.length}개, 총 {totalPages}페이지)
+              📚 {pdfFileList} ({pdfFiles.length}{countUnit}, {totalLabel} {totalPages}{pageLabel})
             </h3>
             <button
               onClick={() => setPdfFiles([])}
               className="text-sm text-gray-500 hover:text-red-500"
             >
-              전체 삭제
+              {deleteAll}
             </button>
           </div>
 
@@ -178,7 +229,7 @@ export default function PdfMerge() {
                     {pdfFile.name}
                   </p>
                   <p className="text-xs text-gray-500">
-                    {pdfFile.pageCount}페이지
+                    {pdfFile.pageCount}{pageLabel}
                   </p>
                 </div>
                 <div className="flex gap-1">
@@ -186,7 +237,7 @@ export default function PdfMerge() {
                     onClick={() => moveFile(index, 'up')}
                     disabled={index === 0 || isProcessing}
                     className="p-2 hover:bg-gray-100 rounded-lg disabled:opacity-30"
-                    title="위로"
+                    title={moveUp}
                   >
                     ⬆️
                   </button>
@@ -194,7 +245,7 @@ export default function PdfMerge() {
                     onClick={() => moveFile(index, 'down')}
                     disabled={index === pdfFiles.length - 1 || isProcessing}
                     className="p-2 hover:bg-gray-100 rounded-lg disabled:opacity-30"
-                    title="아래로"
+                    title={moveDown}
                   >
                     ⬇️
                   </button>
@@ -202,7 +253,7 @@ export default function PdfMerge() {
                     onClick={() => removeFile(pdfFile.id)}
                     disabled={isProcessing}
                     className="p-2 hover:bg-red-100 rounded-lg text-red-500"
-                    title="삭제"
+                    title={deleteBtn}
                   >
                     🗑️
                   </button>
@@ -212,7 +263,7 @@ export default function PdfMerge() {
           </div>
 
           <p className="text-sm text-gray-500 text-center">
-            💡 위/아래 버튼으로 순서를 변경할 수 있어요
+            💡 {orderHint}
           </p>
         </div>
       )}
@@ -221,7 +272,7 @@ export default function PdfMerge() {
       {isProcessing && (
         <div className="bg-blue-50 rounded-xl p-4">
           <div className="flex justify-between items-center mb-2">
-            <span className="font-medium text-blue-700">PDF 합치는 중...</span>
+            <span className="font-medium text-blue-700">{mergingProgress}</span>
             <span className="text-blue-600">{progress}%</span>
           </div>
           <div className="h-3 bg-blue-200 rounded-full overflow-hidden">
@@ -239,18 +290,18 @@ export default function PdfMerge() {
           onClick={mergePdfs}
           className="w-full py-4 bg-gradient-to-r from-ai-primary to-purple-600 text-white font-bold text-lg rounded-xl hover:opacity-90 transition-opacity"
         >
-          🔗 PDF 합치기 ({pdfFiles.length}개 → 1개)
+          🔗 {mergeBtn} ({pdfFiles.length}{countUnit} → 1{countUnit})
         </button>
       )}
 
       {/* 안내 */}
       <div className="bg-gray-50 rounded-xl p-4">
-        <h3 className="font-bold text-gray-700 mb-2">💡 사용 안내</h3>
+        <h3 className="font-bold text-gray-700 mb-2">💡 {usageGuide}</h3>
         <ul className="text-sm text-gray-600 space-y-1">
-          <li>• 여러 개의 PDF 파일을 하나로 합칠 수 있어요</li>
-          <li>• 파일 순서는 드래그하거나 화살표로 변경 가능해요</li>
-          <li>• 모든 처리는 브라우저에서 진행되어 파일이 서버로 전송되지 않아요</li>
-          <li>• 최대 파일 크기 제한이 없지만, 큰 파일은 시간이 걸릴 수 있어요</li>
+          <li>• {guideText1}</li>
+          <li>• {guideText2}</li>
+          <li>• {guideText3}</li>
+          <li>• {guideText4}</li>
         </ul>
       </div>
     </div>

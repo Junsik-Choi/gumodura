@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { useTranslatedTexts } from '@/lib/use-translations';
 
 interface TextStats {
   characters: number;
@@ -15,24 +16,113 @@ interface TextStats {
 
 type CountMode = 'basic' | 'resume';
 
-const SAMPLE_TEXTS = [
-  { name: '트윗', limit: 280, icon: '🐦' },
-  { name: '인스타그램', limit: 2200, icon: '📸' },
-  { name: 'SMS', limit: 80, icon: '💬' },
-  { name: '블로그 제목', limit: 60, icon: '📝' },
+const SAMPLE_TEXTS_KEYS = [
+  { key: 'tweet', limit: 280, icon: '🐦' },
+  { key: 'instagram', limit: 2200, icon: '📸' },
+  { key: 'sms', limit: 80, icon: '💬' },
+  { key: 'blogTitle', limit: 60, icon: '📝' },
 ];
 
 // 자소서 프리셋 (한글 바이트 기준)
-const RESUME_PRESETS = [
-  { name: '500자', charLimit: 500, icon: '📄' },
-  { name: '700자', charLimit: 700, icon: '📄' },
-  { name: '1000자', charLimit: 1000, icon: '📝' },
-  { name: '1500자', charLimit: 1500, icon: '📝' },
-  { name: '2000자', charLimit: 2000, icon: '📑' },
-  { name: '3000자', charLimit: 3000, icon: '📑' },
+const RESUME_PRESETS_KEYS = [
+  { key: 'char500', charLimit: 500, icon: '📄' },
+  { key: 'char700', charLimit: 700, icon: '📄' },
+  { key: 'char1000', charLimit: 1000, icon: '📝' },
+  { key: 'char1500', charLimit: 1500, icon: '📝' },
+  { key: 'char2000', charLimit: 2000, icon: '📑' },
+  { key: 'char3000', charLimit: 3000, icon: '📑' },
 ];
 
 export default function TextCounter() {
+  const [
+    basicMode,
+    resumeMode,
+    resumePlaceholder,
+    basicPlaceholder,
+    copy,
+    clear,
+    resumeCharLimit,
+    charLimitCheck,
+    char,
+    excludingSpaces,
+    charExceeded,
+    charRemaining,
+    progress,
+    appropriateLength,
+    totalChars,
+    excludeSpaces,
+    words,
+    sentences,
+    paragraphs,
+    bytes,
+    additionalInfo,
+    lineCount,
+    lines,
+    bytesExcludingSpaces,
+    avgWordLength,
+    readingTime,
+    speakingTime,
+    approx,
+    minutes,
+    koreanCharCount,
+    tweet,
+    instagram,
+    sms,
+    blogTitle,
+    char500,
+    char700,
+    char1000,
+    char1500,
+    char2000,
+    char3000,
+  ] = useTranslatedTexts([
+    '기본 모드',
+    '자소서 모드',
+    '자기소개서 내용을 입력하세요...',
+    '텍스트를 입력하세요...',
+    '복사',
+    '지우기',
+    '자소서 글자 수 제한',
+    '글자 수 제한 확인',
+    '자',
+    '공백 제외',
+    '자 초과!',
+    '자 남음',
+    '진행률',
+    '적정 분량!',
+    '전체 글자',
+    '공백 제외',
+    '단어',
+    '문장',
+    '단락',
+    '바이트',
+    '추가 정보',
+    '줄 수',
+    '줄',
+    '공백 제외 바이트',
+    '평균 단어 길이',
+    '읽기 시간',
+    '말하기 시간',
+    '약',
+    '분',
+    '한글 글자 수',
+    '트윗',
+    '인스타그램',
+    'SMS',
+    '블로그 제목',
+    '500자',
+    '700자',
+    '1000자',
+    '1500자',
+    '2000자',
+    '3000자',
+  ]);
+
+  const translations: Record<string, string> = {
+    tweet, instagram, sms, blogTitle,
+    char500, char700, char1000, char1500, char2000, char3000,
+  };
+
   const [text, setText] = useState('');
   const [selectedLimit, setSelectedLimit] = useState<number | null>(null);
   const [mode, setMode] = useState<CountMode>('basic');
@@ -98,7 +188,7 @@ export default function TextCounter() {
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
-          📊 기본 모드
+          📊 {basicMode}
         </button>
         <button
           onClick={() => {
@@ -111,7 +201,7 @@ export default function TextCounter() {
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
-          📝 자소서 모드
+          📝 {resumeMode}
         </button>
       </div>
 
@@ -120,7 +210,7 @@ export default function TextCounter() {
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder={mode === 'resume' ? "자기소개서 내용을 입력하세요..." : "텍스트를 입력하세요..."}
+          placeholder={mode === 'resume' ? resumePlaceholder : basicPlaceholder}
           className="w-full h-48 md:h-64 p-4 text-lg border-2 border-gray-200 rounded-2xl resize-none focus:border-ai-primary focus:outline-none transition-colors"
         />
         {text && (
@@ -128,14 +218,14 @@ export default function TextCounter() {
             <button
               onClick={copyText}
               className="p-2 bg-white/90 hover:bg-gray-100 rounded-lg text-sm"
-              title="복사"
+              title={copy}
             >
               📋
             </button>
             <button
               onClick={clearText}
               className="p-2 bg-white/90 hover:bg-gray-100 rounded-lg text-sm"
-              title="지우기"
+              title={clear}
             >
               🗑️
             </button>
@@ -146,9 +236,9 @@ export default function TextCounter() {
       {/* 자소서 모드 - 글자 수 제한 프리셋 */}
       {mode === 'resume' && (
         <div>
-          <p className="font-semibold text-gray-700 mb-3">📋 자소서 글자 수 제한</p>
+          <p className="font-semibold text-gray-700 mb-3">📋 {resumeCharLimit}</p>
           <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
-            {RESUME_PRESETS.map((item) => (
+            {RESUME_PRESETS_KEYS.map((item) => (
               <button
                 key={item.charLimit}
                 onClick={() => setResumeLimit(resumeLimit === item.charLimit ? null : item.charLimit)}
@@ -159,7 +249,7 @@ export default function TextCounter() {
                 }`}
               >
                 <span className="text-xl block mb-1">{item.icon}</span>
-                <span className="font-medium text-gray-700 text-sm">{item.name}</span>
+                <span className="font-medium text-gray-700 text-sm">{translations[item.key]}</span>
               </button>
             ))}
           </div>
@@ -171,13 +261,13 @@ export default function TextCounter() {
         <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-2xl p-5 border-2 border-ai-primary/20">
           <div className="flex justify-between items-center mb-3">
             <span className="font-bold text-lg text-gray-800">
-              📝 {stats.charactersNoSpace.toLocaleString()} / {resumeLimit.toLocaleString()}자
-              <span className="text-sm font-normal text-gray-500 ml-2">(공백 제외)</span>
+              📝 {stats.charactersNoSpace.toLocaleString()} / {resumeLimit.toLocaleString()}{char}
+              <span className="text-sm font-normal text-gray-500 ml-2">({excludingSpaces})</span>
             </span>
             <span className={`text-lg font-bold ${stats.charactersNoSpace > resumeLimit ? 'text-red-500' : 'text-green-600'}`}>
               {stats.charactersNoSpace > resumeLimit 
-                ? `${(stats.charactersNoSpace - resumeLimit).toLocaleString()}자 초과!` 
-                : `${(resumeLimit - stats.charactersNoSpace).toLocaleString()}자 남음`}
+                ? `${(stats.charactersNoSpace - resumeLimit).toLocaleString()}${charExceeded}` 
+                : `${(resumeLimit - stats.charactersNoSpace).toLocaleString()}${charRemaining}`}
             </span>
           </div>
           <div className="h-5 bg-gray-200 rounded-full overflow-hidden">
@@ -187,9 +277,9 @@ export default function TextCounter() {
             />
           </div>
           <div className="mt-3 text-sm text-gray-600 flex justify-between">
-            <span>진행률: {((stats.charactersNoSpace / resumeLimit) * 100).toFixed(1)}%</span>
+            <span>{progress}: {((stats.charactersNoSpace / resumeLimit) * 100).toFixed(1)}%</span>
             <span className={stats.charactersNoSpace >= resumeLimit * 0.9 && stats.charactersNoSpace <= resumeLimit ? 'text-green-600 font-medium' : ''}>
-              {stats.charactersNoSpace >= resumeLimit * 0.9 && stats.charactersNoSpace <= resumeLimit && '✅ 적정 분량!'}
+              {stats.charactersNoSpace >= resumeLimit * 0.9 && stats.charactersNoSpace <= resumeLimit && `✅ ${appropriateLength}`}
             </span>
           </div>
         </div>
@@ -198,11 +288,11 @@ export default function TextCounter() {
       {/* 기본 모드 - 제한 프리셋 */}
       {mode === 'basic' && (
         <div>
-          <p className="font-semibold text-gray-700 mb-3">📏 글자 수 제한 확인</p>
+          <p className="font-semibold text-gray-700 mb-3">📏 {charLimitCheck}</p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {SAMPLE_TEXTS.map((item) => (
+            {SAMPLE_TEXTS_KEYS.map((item) => (
               <button
-                key={item.name}
+                key={item.key}
                 onClick={() => setSelectedLimit(selectedLimit === item.limit ? null : item.limit)}
                 className={`p-3 rounded-xl border-2 transition-all ${
                   selectedLimit === item.limit
@@ -211,8 +301,8 @@ export default function TextCounter() {
                 }`}
               >
                 <span className="text-2xl block mb-1">{item.icon}</span>
-                <span className="font-medium text-gray-700 block text-sm">{item.name}</span>
-                <span className="text-xs text-gray-500">{item.limit}자</span>
+                <span className="font-medium text-gray-700 block text-sm">{translations[item.key]}</span>
+                <span className="text-xs text-gray-500">{item.limit}{char}</span>
               </button>
             ))}
           </div>
@@ -224,12 +314,12 @@ export default function TextCounter() {
         <div className="bg-gray-50 rounded-xl p-4">
           <div className="flex justify-between items-center mb-2">
             <span className="font-medium text-gray-700">
-              {stats.characters} / {selectedLimit}자
+              {stats.characters} / {selectedLimit}{char}
             </span>
             <span className={`text-sm font-bold ${stats.characters > selectedLimit ? 'text-red-500' : 'text-green-600'}`}>
               {stats.characters > selectedLimit 
-                ? `${stats.characters - selectedLimit}자 초과!` 
-                : `${selectedLimit - stats.characters}자 남음`}
+                ? `${stats.characters - selectedLimit}${charExceeded}` 
+                : `${selectedLimit - stats.characters}${charRemaining}`}
             </span>
           </div>
           <div className="h-4 bg-gray-200 rounded-full overflow-hidden">
@@ -245,62 +335,62 @@ export default function TextCounter() {
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 text-center">
           <p className="text-3xl font-bold text-blue-600">{stats.characters.toLocaleString()}</p>
-          <p className="text-sm text-blue-700 mt-1">전체 글자</p>
+          <p className="text-sm text-blue-700 mt-1">{totalChars}</p>
         </div>
         <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 text-center">
           <p className="text-3xl font-bold text-purple-600">{stats.charactersNoSpace.toLocaleString()}</p>
-          <p className="text-sm text-purple-700 mt-1">공백 제외</p>
+          <p className="text-sm text-purple-700 mt-1">{excludeSpaces}</p>
         </div>
         <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 text-center">
           <p className="text-3xl font-bold text-green-600">{stats.words.toLocaleString()}</p>
-          <p className="text-sm text-green-700 mt-1">단어</p>
+          <p className="text-sm text-green-700 mt-1">{words}</p>
         </div>
         <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl p-4 text-center">
           <p className="text-3xl font-bold text-yellow-600">{stats.sentences.toLocaleString()}</p>
-          <p className="text-sm text-yellow-700 mt-1">문장</p>
+          <p className="text-sm text-yellow-700 mt-1">{sentences}</p>
         </div>
         <div className="bg-gradient-to-br from-pink-50 to-pink-100 rounded-xl p-4 text-center">
           <p className="text-3xl font-bold text-pink-600">{stats.paragraphs.toLocaleString()}</p>
-          <p className="text-sm text-pink-700 mt-1">단락</p>
+          <p className="text-sm text-pink-700 mt-1">{paragraphs}</p>
         </div>
         <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-xl p-4 text-center">
           <p className="text-3xl font-bold text-indigo-600">{stats.bytes.toLocaleString()}</p>
-          <p className="text-sm text-indigo-700 mt-1">바이트</p>
+          <p className="text-sm text-indigo-700 mt-1">{bytes}</p>
         </div>
       </div>
 
       {/* 추가 정보 */}
       {text && (
         <div className="bg-gray-50 rounded-xl p-4">
-          <p className="font-semibold text-gray-700 mb-3">📊 추가 정보</p>
+          <p className="font-semibold text-gray-700 mb-3">📊 {additionalInfo}</p>
           <div className="grid grid-cols-2 gap-3 text-sm">
             <div className="flex justify-between">
-              <span className="text-gray-600">줄 수</span>
-              <span className="font-medium">{stats.lines}줄</span>
+              <span className="text-gray-600">{lineCount}</span>
+              <span className="font-medium">{stats.lines}{lines}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">공백 제외 바이트</span>
+              <span className="text-gray-600">{bytesExcludingSpaces}</span>
               <span className="font-medium">{stats.bytesNoSpace.toLocaleString()} bytes</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">평균 단어 길이</span>
+              <span className="text-gray-600">{avgWordLength}</span>
               <span className="font-medium">
-                {stats.words > 0 ? (stats.charactersNoSpace / stats.words).toFixed(1) : 0}자
+                {stats.words > 0 ? (stats.charactersNoSpace / stats.words).toFixed(1) : 0}{char}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">읽기 시간</span>
-              <span className="font-medium">약 {Math.ceil(stats.words / 200)}분</span>
+              <span className="text-gray-600">{readingTime}</span>
+              <span className="font-medium">{approx} {Math.ceil(stats.words / 200)}{minutes}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">말하기 시간</span>
-              <span className="font-medium">약 {Math.ceil(stats.words / 130)}분</span>
+              <span className="text-gray-600">{speakingTime}</span>
+              <span className="font-medium">{approx} {Math.ceil(stats.words / 130)}{minutes}</span>
             </div>
             {mode === 'resume' && (
               <div className="flex justify-between">
-                <span className="text-gray-600">한글 글자 수</span>
+                <span className="text-gray-600">{koreanCharCount}</span>
                 <span className="font-medium">
-                  {(text.match(/[가-힣]/g) || []).length}자
+                  {(text.match(/[가-힣]/g) || []).length}{char}
                 </span>
               </div>
             )}

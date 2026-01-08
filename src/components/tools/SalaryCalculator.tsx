@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import { useTranslatedTexts } from '@/lib/use-translations';
 
 // 2026년 기준 4대보험 요율
 const RATES_2026 = {
@@ -127,6 +128,90 @@ function formatMoney(amount: number): string {
 }
 
 export default function SalaryCalculator() {
+  const [
+    annualSalaryLabel,
+    enterSalaryPlaceholder,
+    wonText,
+    preset30m,
+    preset40m,
+    preset50m,
+    preset60m,
+    preset70m,
+    preset100m,
+    dependentsLabel,
+    personText,
+    childrenLabel,
+    monthlyNetSalary,
+    annualNetSalary,
+    monthlyDeductionDetails,
+    fourInsuranceTitle,
+    nationalPensionLabel,
+    healthInsuranceLabel,
+    longTermCareLabel,
+    employmentInsuranceLabel,
+    fourInsuranceSubtotal,
+    taxTitle,
+    incomeTaxLabel,
+    localIncomeTaxLabel,
+    taxSubtotal,
+    monthlySalaryLabel,
+    beforeTaxLabel,
+    totalDeductionLabel,
+    netSalaryLabel,
+    salaryComparisonTitle,
+    salaryColumnLabel,
+    monthlyNetColumnLabel,
+    deductionRateLabel,
+    tenMillionText,
+    hundredMillionText,
+    notesTitle,
+    note1,
+    note2,
+    note3,
+    note4,
+  ] = useTranslatedTexts([
+    '💰 연봉 (세전)',
+    '연봉을 입력하세요',
+    '원',
+    '3,000만원',
+    '4,000만원',
+    '5,000만원',
+    '6,000만원',
+    '7,000만원',
+    '1억원',
+    '👨‍👩‍👧 부양가족 수 (본인 포함)',
+    '명',
+    '👶 20세 이하 자녀 수',
+    '월 실수령액',
+    '연간 실수령액',
+    '📋 월별 공제 내역',
+    '🏥 4대보험',
+    '국민연금 (4.5%)',
+    '건강보험 (3.89%)',
+    '장기요양 (12.95%)',
+    '고용보험 (0.9%)',
+    '4대보험 소계',
+    '💸 세금',
+    '소득세 (간이세액)',
+    '지방소득세 (10%)',
+    '세금 소계',
+    '월 급여',
+    '(세전)',
+    '총 공제액',
+    '실수령액',
+    '📊 연봉별 실수령액 비교',
+    '연봉',
+    '월 실수령',
+    '공제율',
+    '천만',
+    '억',
+    '⚠️ 참고사항',
+    '2026년 예상 4대보험 요율 기준 계산입니다.',
+    '실제 공제액은 회사, 상여금 지급 방식 등에 따라 다를 수 있습니다.',
+    '소득세는 간이세액표 기준 근사치이며, 연말정산 시 차이가 발생할 수 있습니다.',
+    '비과세 항목(식대, 교통비 등)은 포함되지 않았습니다.',
+  ]);
+
   const [annualSalary, setAnnualSalary] = useState<string>('50000000');
   const [dependents, setDependents] = useState<number>(1);
   const [children, setChildren] = useState<number>(0);
@@ -142,12 +227,12 @@ export default function SalaryCalculator() {
 
   // 빠른 선택 프리셋
   const salaryPresets = [
-    { label: '3,000만원', value: 30000000 },
-    { label: '4,000만원', value: 40000000 },
-    { label: '5,000만원', value: 50000000 },
-    { label: '6,000만원', value: 60000000 },
-    { label: '7,000만원', value: 70000000 },
-    { label: '1억원', value: 100000000 },
+    { label: preset30m, value: 30000000 },
+    { label: preset40m, value: 40000000 },
+    { label: preset50m, value: 50000000 },
+    { label: preset60m, value: 60000000 },
+    { label: preset70m, value: 70000000 },
+    { label: preset100m, value: 100000000 },
   ];
 
   return (
@@ -155,16 +240,16 @@ export default function SalaryCalculator() {
       {/* 입력 섹션 */}
       <div className="space-y-4">
         <div>
-          <label className="block font-semibold text-gray-700 mb-2">💰 연봉 (세전)</label>
+          <label className="block font-semibold text-gray-700 mb-2">{annualSalaryLabel}</label>
           <div className="relative">
             <input
               type="text"
               value={formatMoney(parseInt(annualSalary) || 0)}
               onChange={(e) => handleSalaryChange(e.target.value)}
               className="w-full p-4 text-2xl font-bold text-center border-2 border-gray-200 rounded-xl focus:border-ai-primary focus:outline-none"
-              placeholder="연봉을 입력하세요"
+              placeholder={enterSalaryPlaceholder}
             />
-            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg">원</span>
+            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg">{wonText}</span>
           </div>
         </div>
 
@@ -188,26 +273,26 @@ export default function SalaryCalculator() {
         {/* 부양가족 & 자녀 */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block font-medium text-gray-700 mb-2">👨‍👩‍👧 부양가족 수 (본인 포함)</label>
+            <label className="block font-medium text-gray-700 mb-2">{dependentsLabel}</label>
             <select
               value={dependents}
               onChange={(e) => setDependents(parseInt(e.target.value))}
               className="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-ai-primary focus:outline-none"
             >
               {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
-                <option key={num} value={num}>{num}명</option>
+                <option key={num} value={num}>{num}{personText}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block font-medium text-gray-700 mb-2">👶 20세 이하 자녀 수</label>
+            <label className="block font-medium text-gray-700 mb-2">{childrenLabel}</label>
             <select
               value={children}
               onChange={(e) => setChildren(parseInt(e.target.value))}
               className="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-ai-primary focus:outline-none"
             >
               {[0, 1, 2, 3, 4, 5].map((num) => (
-                <option key={num} value={num}>{num}명</option>
+                <option key={num} value={num}>{num}{personText}</option>
               ))}
             </select>
           </div>
@@ -216,45 +301,45 @@ export default function SalaryCalculator() {
 
       {/* 결과 - 하이라이트 */}
       <div className="bg-gradient-to-br from-ai-primary to-purple-600 rounded-2xl p-6 text-white text-center">
-        <p className="text-lg opacity-90 mb-2">월 실수령액</p>
+        <p className="text-lg opacity-90 mb-2">{monthlyNetSalary}</p>
         <p className="text-4xl sm:text-5xl font-bold">
-          {formatMoney(result.netSalary)}원
+          {formatMoney(result.netSalary)}{wonText}
         </p>
         <p className="text-sm opacity-80 mt-3">
-          연간 실수령액: {formatMoney(result.netSalary * 12)}원
+          {annualNetSalary}: {formatMoney(result.netSalary * 12)}{wonText}
         </p>
       </div>
 
       {/* 공제 내역 */}
       <div className="bg-gray-50 rounded-2xl p-5">
         <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-          📋 월별 공제 내역
+          {monthlyDeductionDetails}
         </h3>
         <div className="space-y-3">
           {/* 4대보험 */}
           <div className="bg-white rounded-xl p-4">
-            <p className="font-medium text-gray-700 mb-3">🏥 4대보험</p>
+            <p className="font-medium text-gray-700 mb-3">{fourInsuranceTitle}</p>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-600">국민연금 (4.5%)</span>
-                <span className="font-medium">-{formatMoney(result.nationalPension)}원</span>
+                <span className="text-gray-600">{nationalPensionLabel}</span>
+                <span className="font-medium">-{formatMoney(result.nationalPension)}{wonText}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">건강보험 (3.89%)</span>
-                <span className="font-medium">-{formatMoney(result.healthInsurance)}원</span>
+                <span className="text-gray-600">{healthInsuranceLabel}</span>
+                <span className="font-medium">-{formatMoney(result.healthInsurance)}{wonText}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">장기요양 (12.95%)</span>
-                <span className="font-medium">-{formatMoney(result.longTermCare)}원</span>
+                <span className="text-gray-600">{longTermCareLabel}</span>
+                <span className="font-medium">-{formatMoney(result.longTermCare)}{wonText}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">고용보험 (0.9%)</span>
-                <span className="font-medium">-{formatMoney(result.employmentInsurance)}원</span>
+                <span className="text-gray-600">{employmentInsuranceLabel}</span>
+                <span className="font-medium">-{formatMoney(result.employmentInsurance)}{wonText}</span>
               </div>
               <div className="flex justify-between pt-2 border-t border-gray-100">
-                <span className="font-medium text-gray-700">4대보험 소계</span>
+                <span className="font-medium text-gray-700">{fourInsuranceSubtotal}</span>
                 <span className="font-bold text-blue-600">
-                  -{formatMoney(result.nationalPension + result.healthInsurance + result.longTermCare + result.employmentInsurance)}원
+                  -{formatMoney(result.nationalPension + result.healthInsurance + result.longTermCare + result.employmentInsurance)}{wonText}
                 </span>
               </div>
             </div>
@@ -262,20 +347,20 @@ export default function SalaryCalculator() {
 
           {/* 세금 */}
           <div className="bg-white rounded-xl p-4">
-            <p className="font-medium text-gray-700 mb-3">💸 세금</p>
+            <p className="font-medium text-gray-700 mb-3">{taxTitle}</p>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-600">소득세 (간이세액)</span>
-                <span className="font-medium">-{formatMoney(result.incomeTax)}원</span>
+                <span className="text-gray-600">{incomeTaxLabel}</span>
+                <span className="font-medium">-{formatMoney(result.incomeTax)}{wonText}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">지방소득세 (10%)</span>
-                <span className="font-medium">-{formatMoney(result.localIncomeTax)}원</span>
+                <span className="text-gray-600">{localIncomeTaxLabel}</span>
+                <span className="font-medium">-{formatMoney(result.localIncomeTax)}{wonText}</span>
               </div>
               <div className="flex justify-between pt-2 border-t border-gray-100">
-                <span className="font-medium text-gray-700">세금 소계</span>
+                <span className="font-medium text-gray-700">{taxSubtotal}</span>
                 <span className="font-bold text-red-600">
-                  -{formatMoney(result.incomeTax + result.localIncomeTax)}원
+                  -{formatMoney(result.incomeTax + result.localIncomeTax)}{wonText}
                 </span>
               </div>
             </div>
@@ -285,22 +370,22 @@ export default function SalaryCalculator() {
           <div className="bg-white rounded-xl p-4 border-2 border-ai-primary/30">
             <div className="flex justify-between items-center">
               <div>
-                <p className="font-medium text-gray-700">월 급여</p>
-                <p className="text-sm text-gray-500">(세전)</p>
+                <p className="font-medium text-gray-700">{monthlySalaryLabel}</p>
+                <p className="text-sm text-gray-500">{beforeTaxLabel}</p>
               </div>
-              <span className="text-xl font-bold">{formatMoney(Math.floor(salary / 12))}원</span>
+              <span className="text-xl font-bold">{formatMoney(Math.floor(salary / 12))}{wonText}</span>
             </div>
             <div className="flex justify-between items-center mt-3 pt-3 border-t border-gray-100">
               <div>
-                <p className="font-medium text-gray-700">총 공제액</p>
+                <p className="font-medium text-gray-700">{totalDeductionLabel}</p>
               </div>
-              <span className="text-xl font-bold text-red-500">-{formatMoney(result.totalDeduction)}원</span>
+              <span className="text-xl font-bold text-red-500">-{formatMoney(result.totalDeduction)}{wonText}</span>
             </div>
             <div className="flex justify-between items-center mt-3 pt-3 border-t-2 border-ai-primary">
               <div>
-                <p className="font-bold text-gray-800">실수령액</p>
+                <p className="font-bold text-gray-800">{netSalaryLabel}</p>
               </div>
-              <span className="text-2xl font-bold text-ai-primary">{formatMoney(result.netSalary)}원</span>
+              <span className="text-2xl font-bold text-ai-primary">{formatMoney(result.netSalary)}{wonText}</span>
             </div>
           </div>
         </div>
@@ -309,15 +394,15 @@ export default function SalaryCalculator() {
       {/* 연봉별 비교표 */}
       <div className="bg-gray-50 rounded-2xl p-5">
         <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-          📊 연봉별 실수령액 비교
+          {salaryComparisonTitle}
         </h3>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b-2 border-gray-200">
-                <th className="py-2 px-3 text-left">연봉</th>
-                <th className="py-2 px-3 text-right">월 실수령</th>
-                <th className="py-2 px-3 text-right">공제율</th>
+                <th className="py-2 px-3 text-left">{salaryColumnLabel}</th>
+                <th className="py-2 px-3 text-right">{monthlyNetColumnLabel}</th>
+                <th className="py-2 px-3 text-right">{deductionRateLabel}</th>
               </tr>
             </thead>
             <tbody>
@@ -332,8 +417,8 @@ export default function SalaryCalculator() {
                     key={sal} 
                     className={`border-b border-gray-100 ${isCurrentRange ? 'bg-ai-primary/10' : ''}`}
                   >
-                    <td className="py-2 px-3 font-medium">{sal >= 10000 ? `${sal / 10000}억` : `${sal / 100}천만`}원</td>
-                    <td className="py-2 px-3 text-right font-bold">{formatMoney(res.netSalary)}원</td>
+                    <td className="py-2 px-3 font-medium">{sal >= 10000 ? `${sal / 10000}${hundredMillionText}` : `${sal / 100}${tenMillionText}`}{wonText}</td>
+                    <td className="py-2 px-3 text-right font-bold">{formatMoney(res.netSalary)}{wonText}</td>
                     <td className="py-2 px-3 text-right text-gray-500">{deductionRate}%</td>
                   </tr>
                 );
@@ -345,12 +430,12 @@ export default function SalaryCalculator() {
 
       {/* 안내 */}
       <div className="bg-yellow-50 rounded-xl p-4 text-sm text-yellow-800">
-        <p className="font-medium mb-2">⚠️ 참고사항</p>
+        <p className="font-medium mb-2">{notesTitle}</p>
         <ul className="list-disc list-inside space-y-1 text-yellow-700">
-          <li>2026년 예상 4대보험 요율 기준 계산입니다.</li>
-          <li>실제 공제액은 회사, 상여금 지급 방식 등에 따라 다를 수 있습니다.</li>
-          <li>소득세는 간이세액표 기준 근사치이며, 연말정산 시 차이가 발생할 수 있습니다.</li>
-          <li>비과세 항목(식대, 교통비 등)은 포함되지 않았습니다.</li>
+          <li>{note1}</li>
+          <li>{note2}</li>
+          <li>{note3}</li>
+          <li>{note4}</li>
         </ul>
       </div>
     </div>

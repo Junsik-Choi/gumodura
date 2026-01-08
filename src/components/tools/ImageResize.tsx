@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useCallback } from 'react';
+import { useTranslatedTexts } from '@/lib/use-translations';
 
 interface ImageData {
   file: File;
@@ -9,16 +10,64 @@ interface ImageData {
   height: number;
 }
 
-const PRESET_SIZES = [
-  { name: '프로필', width: 200, height: 200, icon: '👤' },
-  { name: 'HD', width: 1280, height: 720, icon: '📺' },
-  { name: 'Full HD', width: 1920, height: 1080, icon: '🖥️' },
-  { name: 'SNS 정사각형', width: 1080, height: 1080, icon: '📱' },
-  { name: '카카오톡', width: 720, height: 720, icon: '💬' },
-  { name: 'A4 인쇄', width: 2480, height: 3508, icon: '🖨️' },
-];
-
 export default function ImageResize() {
+  const [
+    profileLabel,
+    snsSquareLabel,
+    kakaoLabel,
+    a4PrintLabel,
+    selectImageLabel,
+    supportedFormatsLabel,
+    originalLabel,
+    reselectLabel,
+    quickSizeLabel,
+    sizeSettingLabel,
+    keepRatioLabel,
+    widthLabel,
+    heightLabel,
+    formatLabel,
+    qualityLabel,
+    smallSizeLabel,
+    highQualityLabel,
+    processingLabel,
+    convertBtnLabel,
+    convertedLabel,
+    convertedImageLabel,
+    downloadLabel,
+  ] = useTranslatedTexts([
+    '프로필',
+    'SNS 정사각형',
+    '카카오톡',
+    'A4 인쇄',
+    '이미지를 선택하세요',
+    'JPG, PNG, WebP 지원',
+    '원본',
+    '다시 선택',
+    '빠른 크기 선택',
+    '크기 설정',
+    '비율 유지',
+    '너비 (px)',
+    '높이 (px)',
+    '파일 형식',
+    '품질',
+    '작은 용량',
+    '고품질',
+    '변환 중...',
+    '이미지 변환하기',
+    '변환 완료!',
+    '변환된 이미지',
+    '다운로드',
+  ]);
+
+  const PRESET_SIZES = [
+    { name: profileLabel, width: 200, height: 200, icon: '👤' },
+    { name: 'HD', width: 1280, height: 720, icon: '📺' },
+    { name: 'Full HD', width: 1920, height: 1080, icon: '🖥️' },
+    { name: snsSquareLabel, width: 1080, height: 1080, icon: '📱' },
+    { name: kakaoLabel, width: 720, height: 720, icon: '💬' },
+    { name: a4PrintLabel, width: 2480, height: 3508, icon: '🖨️' },
+  ];
+
   const [imageData, setImageData] = useState<ImageData | null>(null);
   const [targetWidth, setTargetWidth] = useState<number>(0);
   const [targetHeight, setTargetHeight] = useState<number>(0);
@@ -133,9 +182,9 @@ export default function ImageResize() {
         >
           <div className="text-5xl sm:text-6xl mb-4">🖼️</div>
           <p className="text-lg sm:text-xl font-semibold text-gray-700 mb-2">
-            이미지를 선택하세요
+            {selectImageLabel}
           </p>
-          <p className="text-sm text-gray-500">JPG, PNG, WebP 지원</p>
+          <p className="text-sm text-gray-500">{supportedFormatsLabel}</p>
           <input
             ref={fileInputRef}
             type="file"
@@ -153,26 +202,26 @@ export default function ImageResize() {
           <div className="bg-gray-50 rounded-xl p-4 flex items-center gap-4">
             <img
               src={imageData.preview}
-              alt="원본"
+              alt={originalLabel}
               className="w-16 h-16 object-cover rounded-lg"
             />
             <div className="flex-1">
               <p className="font-semibold text-gray-800">{imageData.file.name}</p>
               <p className="text-sm text-gray-500">
-                원본: {imageData.width} × {imageData.height}px
+                {originalLabel}: {imageData.width} × {imageData.height}px
               </p>
             </div>
             <button
               onClick={reset}
               className="px-3 py-2 text-sm bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors"
             >
-              다시 선택
+              {reselectLabel}
             </button>
           </div>
 
           {/* 프리셋 크기 */}
           <div>
-            <p className="font-semibold text-gray-700 mb-3">📐 빠른 크기 선택</p>
+            <p className="font-semibold text-gray-700 mb-3">📐 {quickSizeLabel}</p>
             <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
               {PRESET_SIZES.map((preset) => (
                 <button
@@ -191,7 +240,7 @@ export default function ImageResize() {
           {/* 크기 입력 */}
           <div className="bg-white border-2 border-gray-200 rounded-xl p-4 space-y-4">
             <div className="flex items-center justify-between">
-              <p className="font-semibold text-gray-700">📏 크기 설정</p>
+              <p className="font-semibold text-gray-700">📏 {sizeSettingLabel}</p>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
@@ -199,13 +248,13 @@ export default function ImageResize() {
                   onChange={(e) => setKeepAspectRatio(e.target.checked)}
                   className="w-5 h-5 rounded text-ai-primary"
                 />
-                <span className="text-sm text-gray-600">비율 유지 🔗</span>
+                <span className="text-sm text-gray-600">{keepRatioLabel} 🔗</span>
               </label>
             </div>
 
             <div className="flex items-center gap-4">
               <div className="flex-1">
-                <label className="text-sm text-gray-500 mb-1 block">너비 (px)</label>
+                <label className="text-sm text-gray-500 mb-1 block">{widthLabel}</label>
                 <input
                   type="number"
                   value={targetWidth}
@@ -217,7 +266,7 @@ export default function ImageResize() {
               </div>
               <span className="text-2xl text-gray-400 pt-6">×</span>
               <div className="flex-1">
-                <label className="text-sm text-gray-500 mb-1 block">높이 (px)</label>
+                <label className="text-sm text-gray-500 mb-1 block">{heightLabel}</label>
                 <input
                   type="number"
                   value={targetHeight}
@@ -233,7 +282,7 @@ export default function ImageResize() {
           {/* 포맷 & 품질 */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="bg-white border-2 border-gray-200 rounded-xl p-4">
-              <p className="font-semibold text-gray-700 mb-3">📁 파일 형식</p>
+              <p className="font-semibold text-gray-700 mb-3">📁 {formatLabel}</p>
               <div className="flex gap-2">
                 {(['jpeg', 'png', 'webp'] as const).map((f) => (
                   <button
@@ -252,7 +301,7 @@ export default function ImageResize() {
             </div>
 
             <div className="bg-white border-2 border-gray-200 rounded-xl p-4">
-              <p className="font-semibold text-gray-700 mb-3">✨ 품질: {quality}%</p>
+              <p className="font-semibold text-gray-700 mb-3">✨ {qualityLabel}: {quality}%</p>
               <input
                 type="range"
                 min={10}
@@ -262,8 +311,8 @@ export default function ImageResize() {
                 className="w-full h-3 bg-gray-200 rounded-full appearance-none cursor-pointer"
               />
               <div className="flex justify-between text-xs text-gray-400 mt-1">
-                <span>작은 용량</span>
-                <span>고품질</span>
+                <span>{smallSizeLabel}</span>
+                <span>{highQualityLabel}</span>
               </div>
             </div>
           </div>
@@ -274,16 +323,16 @@ export default function ImageResize() {
             disabled={processing || !targetWidth || !targetHeight}
             className="w-full py-4 bg-ai-primary hover:bg-ai-primary-dark disabled:bg-gray-400 text-white font-bold text-xl rounded-2xl transition-colors"
           >
-            {processing ? '변환 중...' : '✨ 이미지 변환하기'}
+            {processing ? processingLabel : `✨ ${convertBtnLabel}`}
           </button>
 
           {/* 결과 */}
           {resizedImage && (
             <div className="bg-green-50 border-2 border-green-200 rounded-xl p-6 text-center space-y-4">
-              <p className="text-lg font-semibold text-green-700">✅ 변환 완료!</p>
+              <p className="text-lg font-semibold text-green-700">✅ {convertedLabel}</p>
               <img
                 src={resizedImage}
-                alt="변환된 이미지"
+                alt={convertedImageLabel}
                 className="max-w-full max-h-64 mx-auto rounded-lg shadow-lg"
               />
               <p className="text-sm text-gray-600">
@@ -293,7 +342,7 @@ export default function ImageResize() {
                 onClick={downloadImage}
                 className="px-8 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl transition-colors"
               >
-                📥 다운로드
+                📥 {downloadLabel}
               </button>
             </div>
           )}
