@@ -9,6 +9,28 @@ import UnitConverter from '@/components/tools/UnitConverter';
 import Timer from '@/components/tools/Timer';
 import RandomPicker from '@/components/tools/RandomPicker';
 import ComingSoon from '@/components/tools/ComingSoon';
+// 금융 계산기
+import SalaryCalculator from '@/components/tools/SalaryCalculator';
+import StockAverageCalculator from '@/components/tools/StockAverageCalculator';
+import VatCalculator from '@/components/tools/VatCalculator';
+import PercentCalculator from '@/components/tools/PercentCalculator';
+// PDF/파일 도구
+import PdfMerge from '@/components/tools/PdfMerge';
+// 생활/편의 도구
+import LunarSolarConverter from '@/components/tools/LunarSolarConverter';
+import MilitaryDischargeCalculator from '@/components/tools/MilitaryDischargeCalculator';
+import AgeCalculator from '@/components/tools/AgeCalculator';
+import MyIpAddress from '@/components/tools/MyIpAddress';
+import PostcodeSearch from '@/components/tools/PostcodeSearch';
+// 이미지/미디어 도구
+import BackgroundRemover from '@/components/tools/BackgroundRemover';
+import YoutubeThumbnail from '@/components/tools/YoutubeThumbnail';
+// 건강/반려동물 도구
+import BmiCalculator from '@/components/tools/BmiCalculator';
+import PetCalorieCalculator from '@/components/tools/PetCalorieCalculator';
+// 재미/놀이 도구
+import LunchMenuPicker from '@/components/tools/LunchMenuPicker';
+import LadderGame from '@/components/tools/LadderGame';
 
 interface ToolPageProps {
   params: Promise<{ id: string }>;
@@ -34,6 +56,28 @@ const toolComponents: Record<string, React.ComponentType> = {
   'unit-converter': UnitConverter,
   'timer': Timer,
   'random-picker': RandomPicker,
+  // 금융 계산기
+  'salary-calculator': SalaryCalculator,
+  'stock-average': StockAverageCalculator,
+  'vat-calculator': VatCalculator,
+  'percent-calculator': PercentCalculator,
+  // PDF/파일 도구
+  'pdf-merge': PdfMerge,
+  // 생활/편의 도구
+  'lunar-solar': LunarSolarConverter,
+  'military-discharge': MilitaryDischargeCalculator,
+  'age-calculator': AgeCalculator,
+  'my-ip': MyIpAddress,
+  'postcode': PostcodeSearch,
+  // 이미지/미디어 도구
+  'background-remover': BackgroundRemover,
+  'youtube-thumbnail': YoutubeThumbnail,
+  // 건강/반려동물 도구
+  'bmi-calculator': BmiCalculator,
+  'pet-calorie': PetCalorieCalculator,
+  // 재미/놀이 도구
+  'lunch-menu': LunchMenuPicker,
+  'ladder-game': LadderGame,
   // 새 도구 추가 시 여기에 매핑
 };
 

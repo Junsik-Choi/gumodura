@@ -54,6 +54,20 @@ export const CATEGORIES: CategoryMeta[] = [
     icon: '🎮',
     color: 'bg-pink-500',
   },
+  {
+    id: 'finance',
+    name_ko: '금융 계산기',
+    description_ko: '연봉, 이자, 세금 계산',
+    icon: '💰',
+    color: 'bg-emerald-500',
+  },
+  {
+    id: 'health',
+    name_ko: '건강/반려동물',
+    description_ko: 'BMI, 칼로리 계산',
+    icon: '🏥',
+    color: 'bg-rose-500',
+  },
 ];
 
 /**

@@ -10,7 +10,9 @@ export type ToolCategory =
   | 'qr'        // QR/바코드
   | 'text'      // 텍스트 도구
   | 'calc'      // 계산기/변환기
+  | 'finance'   // 금융 계산기
   | 'life'      // 생활 도구
+  | 'health'    // 건강/반려동물
   | 'fun';      // 재미/놀이
 
 // 카테고리 메타 정보

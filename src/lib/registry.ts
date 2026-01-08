@@ -125,6 +125,232 @@ export const TOOLS_REGISTRY: Tool[] = [
     route: '/tools/random-picker/',
     icon: '🎲',
   },
+
+  // ============ 금융 계산기 ============
+  {
+    id: 'salary-calculator',
+    name_ko: '연봉 실수령액 계산기',
+    description_ko: '4대보험 공제 후 월 실수령액을 계산해요',
+    category: 'finance',
+    keywords: [
+      '연봉', '실수령액', '월급', '세금', '4대보험', '국민연금',
+      '건강보험', '고용보험', '소득세', '급여', '세후', '연봉계산기',
+      '월급계산', '실수령', '세전세후'
+    ],
+    route: '/tools/salary-calculator/',
+    icon: '💰',
+    isNew: true,
+    isPopular: true,
+  },
+  {
+    id: 'stock-average',
+    name_ko: '주식 물타기 계산기',
+    description_ko: '평균 매수 단가를 계산해요',
+    category: 'finance',
+    keywords: [
+      '주식', '물타기', '평균단가', '평단가', '매수', '주식계산기',
+      '평균매수가', '물타기계산', '주식평균', '추가매수', '분할매수'
+    ],
+    route: '/tools/stock-average/',
+    icon: '📈',
+    isNew: true,
+  },
+  {
+    id: 'vat-calculator',
+    name_ko: '부가세 계산기',
+    description_ko: '공급가액과 부가세를 분리 계산해요',
+    category: 'finance',
+    keywords: [
+      '부가세', '부가가치세', 'VAT', '공급가액', '세금', '세금계산서',
+      '10%', '부가세계산', '세액', '합계금액', '역산'
+    ],
+    route: '/tools/vat-calculator/',
+    icon: '🧾',
+    isNew: true,
+  },
+  {
+    id: 'percent-calculator',
+    name_ko: '퍼센트 계산기',
+    description_ko: '다양한 퍼센트 계산을 해요',
+    category: 'finance',
+    keywords: [
+      '퍼센트', '비율', '%', '할인', '증가율', '변화율',
+      '퍼센트계산', '비율계산', '할인계산', '백분율'
+    ],
+    route: '/tools/percent-calculator/',
+    icon: '📊',
+    isNew: true,
+  },
+
+  // ============ PDF/파일 도구 ============
+  {
+    id: 'pdf-merge',
+    name_ko: 'PDF 합치기',
+    description_ko: '여러 개의 PDF 파일을 하나로 합쳐요',
+    category: 'file',
+    keywords: [
+      'PDF', '합치기', '병합', '결합', '피디에프', '파일합치기',
+      'PDF병합', 'PDF결합', '문서합치기', 'merge', 'combine'
+    ],
+    route: '/tools/pdf-merge/',
+    icon: '📑',
+    isNew: true,
+  },
+
+  // ============ 생활/편의 도구 ============
+  {
+    id: 'lunar-solar',
+    name_ko: '음력/양력 변환기',
+    description_ko: '음력과 양력 날짜를 변환하고 간지를 확인해요',
+    category: 'life',
+    keywords: [
+      '음력', '양력', '변환', '달력', '간지', '띠', '생일',
+      '음력양력변환', '양력음력변환', '음력날짜', '양력날짜', '갑자'
+    ],
+    route: '/tools/lunar-solar/',
+    icon: '🌙',
+    isNew: true,
+  },
+  {
+    id: 'military-discharge',
+    name_ko: '전역일 계산기',
+    description_ko: '군 전역일과 복무 진행률을 계산해요',
+    category: 'life',
+    keywords: [
+      '전역일', '군대', '복무', '병역', '군복무', '전역',
+      '입대', '진급', '일병', '상병', '병장', '전역일계산기',
+      'D-day', '군전역', '복무기간'
+    ],
+    route: '/tools/military-discharge/',
+    icon: '🎖️',
+    isNew: true,
+    isPopular: true,
+  },
+  {
+    id: 'age-calculator',
+    name_ko: '만 나이 계산기',
+    description_ko: '만 나이와 한국식 나이를 계산해요',
+    category: 'life',
+    keywords: [
+      '만나이', '나이', '세', '생일', '나이계산', '만나이계산',
+      '한국나이', '연나이', '생후일수', '별자리', '띠'
+    ],
+    route: '/tools/age-calculator/',
+    icon: '🎂',
+    isNew: true,
+  },
+  {
+    id: 'my-ip',
+    name_ko: '내 아이피 확인',
+    description_ko: '현재 접속한 공인 IP 주소를 확인해요',
+    category: 'life',
+    keywords: [
+      'IP', '아이피', '공인IP', 'IP주소', '내아이피', 'myip',
+      '아이피확인', 'IP확인', '인터넷주소', '네트워크'
+    ],
+    route: '/tools/my-ip/',
+    icon: '🌐',
+    isNew: true,
+  },
+  {
+    id: 'postcode',
+    name_ko: '우편번호 찾기',
+    description_ko: '주소 검색으로 우편번호를 찾아요',
+    category: 'life',
+    keywords: [
+      '우편번호', '주소', '도로명주소', '지번주소', '우편번호찾기',
+      '주소검색', '우체국', '배송지', '주소찾기'
+    ],
+    route: '/tools/postcode/',
+    icon: '📮',
+    isNew: true,
+  },
+
+  // ============ 이미지/미디어 도구 ============
+  {
+    id: 'background-remover',
+    name_ko: '이미지 배경 제거',
+    description_ko: '이미지에서 배경을 자동으로 제거해요',
+    category: 'image',
+    keywords: [
+      '배경제거', '배경', '누끼', '투명배경', '포토샵',
+      '배경지우기', '배경삭제', '이미지편집', '누끼따기'
+    ],
+    route: '/tools/background-remover/',
+    icon: '✂️',
+    isNew: true,
+  },
+  {
+    id: 'youtube-thumbnail',
+    name_ko: '유튜브 썸네일 다운로드',
+    description_ko: 'YouTube 영상의 썸네일 이미지를 다운로드해요',
+    category: 'image',
+    keywords: [
+      '유튜브', '썸네일', 'YouTube', '유튜브썸네일', '썸네일추출',
+      '썸네일다운로드', '영상썸네일', '유튜브이미지', '섬네일'
+    ],
+    route: '/tools/youtube-thumbnail/',
+    icon: '🎬',
+    isNew: true,
+    isPopular: true,
+  },
+
+  // ============ 건강/반려동물 도구 ============
+  {
+    id: 'bmi-calculator',
+    name_ko: 'BMI 계산기',
+    description_ko: '체질량지수(BMI)와 비만도를 확인해요',
+    category: 'health',
+    keywords: [
+      'BMI', '체질량지수', '비만', '체중', '키', '비만도',
+      'BMI계산', '비만계산기', '다이어트', '정상체중', '건강'
+    ],
+    route: '/tools/bmi-calculator/',
+    icon: '⚖️',
+    isNew: true,
+  },
+  {
+    id: 'pet-calorie',
+    name_ko: '반려동물 칼로리 계산기',
+    description_ko: '강아지/고양이 1일 권장 칼로리를 계산해요',
+    category: 'health',
+    keywords: [
+      '반려동물', '강아지', '고양이', '칼로리', '사료', '급여량',
+      '펫', 'pet', '사료량', 'RER', 'DER', '반려견', '반려묘'
+    ],
+    route: '/tools/pet-calorie/',
+    icon: '🐾',
+    isNew: true,
+  },
+
+  // ============ 재미/놀이 도구 ============
+  {
+    id: 'lunch-menu',
+    name_ko: '점심 메뉴 추천',
+    description_ko: '오늘 점심 뭐 먹지? 랜덤으로 추천받아요',
+    category: 'fun',
+    keywords: [
+      '점심', '메뉴', '추천', '뭐먹지', '랜덤', '룰렛',
+      '점심메뉴', '메뉴추천', '밥', '음식', '오늘점심'
+    ],
+    route: '/tools/lunch-menu/',
+    icon: '🍱',
+    isNew: true,
+    isPopular: true,
+  },
+  {
+    id: 'ladder-game',
+    name_ko: '사다리 타기',
+    description_ko: '사다리 게임으로 당첨자를 정해요',
+    category: 'fun',
+    keywords: [
+      '사다리', '제비뽑기', '게임', '추첨', '당첨', '사다리타기',
+      '사다리게임', '랜덤추첨', '순서정하기', '뽑기'
+    ],
+    route: '/tools/ladder-game/',
+    icon: '🪜',
+    isNew: true,
+  },
 ];
 
 /**
