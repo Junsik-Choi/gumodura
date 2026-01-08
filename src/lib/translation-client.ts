@@ -4,6 +4,13 @@ import { Language } from '@/lib/i18n';
 
 const MEMORY_CACHE = new Map<string, string>();
 const STORAGE_PREFIX = 'translation-cache-v1';
+const GOOGLE_LANGUAGE_MAP: Record<Language, string> = {
+  ko: 'ko',
+  en: 'en',
+  ja: 'ja',
+  zh: 'zh-CN',
+  es: 'es',
+};
 
 function getCacheKey(language: Language, text: string) {
   return `${STORAGE_PREFIX}:${language}:${text}`;
@@ -53,38 +60,82 @@ export async function translateTexts(
   }
 
   if (missing.length > 0) {
-    try {
-      const response = await fetch('/api/translate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          texts: missing,
-          targetLanguage,
-          sourceLanguage,
-        }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        const translatedTexts: string[] = data.translations || [];
-        translatedTexts.forEach((translated, index) => {
-          const original = missing[index];
-          if (original) {
-            const finalText = translated || original;
-            setCachedTranslation(targetLanguage, original, finalText);
-            translations.set(original, finalText);
-          }
-        });
+    const translatedTexts = await requestTranslations(missing, targetLanguage, sourceLanguage);
+    translatedTexts.forEach((translated, index) => {
+      const original = missing[index];
+      if (original) {
+        const finalText = translated || original;
+        setCachedTranslation(targetLanguage, original, finalText);
+        translations.set(original, finalText);
       }
-    } catch (error) {
-      console.error('Translation request failed:', error);
-    }
+    });
   }
 
   return texts.map(text => {
     if (!text.trim()) return text;
     return translations.get(text) || text;
   });
+}
+
+async function requestTranslations(
+  texts: string[],
+  targetLanguage: Language,
+  sourceLanguage?: Language
+): Promise<string[]> {
+  try {
+    const response = await fetch('/api/translate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        texts,
+        targetLanguage,
+        sourceLanguage,
+      }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      const translatedTexts: string[] = data.translations || [];
+      if (translatedTexts.length) {
+        return translatedTexts;
+      }
+    }
+  } catch (error) {
+    console.warn('API translation request failed, falling back:', error);
+  }
+
+  return translateViaGoogle(texts, targetLanguage);
+}
+
+async function translateViaGoogle(texts: string[], targetLanguage: Language): Promise<string[]> {
+  const languageCode = GOOGLE_LANGUAGE_MAP[targetLanguage];
+  const results = await Promise.all(
+    texts.map(async text => {
+      try {
+        const params = new URLSearchParams({
+          client: 'gtx',
+          sl: 'auto',
+          tl: languageCode,
+          dt: 't',
+          q: text,
+        });
+        const response = await fetch(`https://translate.googleapis.com/translate_a/single?${params.toString()}`);
+        if (!response.ok) {
+          return text;
+        }
+        const data = await response.json();
+        if (Array.isArray(data) && Array.isArray(data[0])) {
+          return data[0].map((chunk: [string]) => chunk[0]).join('');
+        }
+        return text;
+      } catch (error) {
+        console.warn('Google translation failed:', error);
+        return text;
+      }
+    })
+  );
+
+  return results;
 }
