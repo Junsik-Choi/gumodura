@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslatedTexts } from '@/lib/use-translations';
 
@@ -13,6 +13,8 @@ import { useTranslatedTexts } from '@/lib/use-translations';
 export default function HomeSearchBar() {
   const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
+  const [placeholderFontSize, setPlaceholderFontSize] = useState('1rem');
+  const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   
   const [
@@ -24,6 +26,36 @@ export default function HomeSearchBar() {
     '검색',
     '예: 이미지 압축, QR코드 만들기, PDF 합치기',
   ]);
+
+  // placeholder 텍스트가 길면 폰트 크기 자동 조절
+  useEffect(() => {
+    if (!inputRef.current || !placeholder) return;
+    
+    const input = inputRef.current;
+    const containerWidth = input.offsetWidth - 20; // 여유 공간
+    
+    // 임시 span으로 텍스트 너비 측정
+    const measureSpan = document.createElement('span');
+    measureSpan.style.visibility = 'hidden';
+    measureSpan.style.position = 'absolute';
+    measureSpan.style.whiteSpace = 'nowrap';
+    measureSpan.style.font = getComputedStyle(input).font;
+    measureSpan.textContent = placeholder;
+    document.body.appendChild(measureSpan);
+    
+    const textWidth = measureSpan.offsetWidth;
+    document.body.removeChild(measureSpan);
+    
+    // 텍스트가 너무 길면 폰트 크기 축소
+    if (textWidth > containerWidth && containerWidth > 0) {
+      const ratio = containerWidth / textWidth;
+      const baseFontSize = window.innerWidth >= 640 ? 18 : 16; // sm:text-lg : text-base
+      const newSize = Math.max(baseFontSize * ratio, 12); // 최소 12px
+      setPlaceholderFontSize(`${newSize}px`);
+    } else {
+      setPlaceholderFontSize('');
+    }
+  }, [placeholder]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,6 +97,7 @@ export default function HomeSearchBar() {
 
           {/* 입력창 */}
           <input
+            ref={inputRef}
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -78,6 +111,7 @@ export default function HomeSearchBar() {
               bg-transparent outline-none
               min-w-0
             "
+            style={placeholderFontSize ? { fontSize: placeholderFontSize } as React.CSSProperties : undefined}
           />
 
           {/* 검색 버튼 */}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { useTranslatedTexts } from '@/lib/use-translations';
@@ -18,6 +18,8 @@ export default function Header() {
   const [isFocused, setIsFocused] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
+  const isHomePage = pathname === '/' || pathname === '';
   const [
     headerTitle,
     searchPlaceholder,
@@ -57,7 +59,8 @@ export default function Header() {
           </Link>
 
           <div className="flex items-center gap-3">
-            {/* 데스크탑 검색창 */}
+            {/* 데스크탑 검색창 - 메인 페이지에서는 숨김 */}
+            {!isHomePage && (
             <form 
               onSubmit={handleSearch}
               className="hidden sm:flex flex-1 max-w-xl ml-8"
@@ -124,24 +127,27 @@ export default function Header() {
                 </button>
               </div>
             </form>
+            )}
 
             <LanguageSwitcher />
 
-            {/* 모바일 검색 버튼 */}
-            <button
-              onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
-              className="sm:hidden flex items-center justify-center w-11 h-11 rounded-full bg-ai-primary/10 text-ai-primary active:scale-95 transition-transform"
-              aria-label={searchAriaLabel}
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </button>
+            {/* 모바일 검색 버튼 - 메인 페이지에서는 숨김 */}
+            {!isHomePage && (
+              <button
+                onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
+                className="sm:hidden flex items-center justify-center w-11 h-11 rounded-full bg-ai-primary/10 text-ai-primary active:scale-95 transition-transform"
+                aria-label={searchAriaLabel}
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </button>
+            )}
           </div>
         </div>
 
-        {/* 모바일 검색창 (펼침) */}
-        {mobileSearchOpen && (
+        {/* 모바일 검색창 (펼침) - 메인 페이지에서는 숨김 */}
+        {!isHomePage && mobileSearchOpen && (
           <div className="sm:hidden pb-3 animate-fade-in">
             <form onSubmit={handleSearch}>
               <div className="flex items-center rounded-2xl border-2 border-ai-primary bg-white shadow-lg shadow-ai-primary/10">

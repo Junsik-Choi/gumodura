@@ -20,6 +20,9 @@ export interface CategoryMeta {
   id: ToolCategory;
   name_ko: string;
   name_en: string;
+  name_ja: string;
+  name_zh: string;
+  name_es: string;
   description_ko: string;
   description_en: string;
   icon: string;
@@ -31,6 +34,9 @@ export interface Tool {
   id: string;
   name_ko: string;
   name_en: string;
+  name_ja: string;
+  name_zh: string;
+  name_es: string;
   description_ko: string;
   description_en: string;
   category: ToolCategory;

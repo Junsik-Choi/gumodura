@@ -50,11 +50,25 @@ export default function CategoryCardExpanded({ category, tools }: CategoryCardEx
 
   // 언어에 따른 이름 선택
   const getCategoryName = () => {
-    return language === 'ko' ? category.name_ko : category.name_en;
+    const names: Record<string, string> = {
+      ko: category.name_ko,
+      en: category.name_en,
+      ja: category.name_ja,
+      zh: category.name_zh,
+      es: category.name_es,
+    };
+    return names[language] || category.name_en;
   };
 
   const getToolName = (tool: Tool) => {
-    return language === 'ko' ? tool.name_ko : tool.name_en;
+    const names: Record<string, string> = {
+      ko: tool.name_ko,
+      en: tool.name_en,
+      ja: tool.name_ja,
+      zh: tool.name_zh,
+      es: tool.name_es,
+    };
+    return names[language] || tool.name_en;
   };
 
   return (
