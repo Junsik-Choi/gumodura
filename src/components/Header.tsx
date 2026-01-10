@@ -50,10 +50,10 @@ export default function Header() {
           {/* 로고 */}
           <Link 
             href="/" 
-            className="flex items-center gap-1.5 sm:gap-2 group shrink-0"
+            className="flex items-center gap-1.5 sm:gap-2 group shrink-0 px-3 sm:px-4 py-2 rounded-xl bg-gradient-to-br from-ai-primary/10 to-purple-50 hover:from-ai-primary/15 hover:to-purple-100 transition-all"
           >
             <span className="text-2xl sm:text-3xl">🔮</span>
-            <span className="text-lg sm:text-2xl font-bold text-gray-800 group-hover:text-ai-primary transition-colors">
+            <span className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-ai-primary to-purple-600 bg-clip-text text-transparent group-hover:from-ai-primary-dark group-hover:to-purple-700 transition-colors">
               {headerTitle}
             </span>
           </Link>

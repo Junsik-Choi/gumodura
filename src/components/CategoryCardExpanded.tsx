@@ -72,7 +72,7 @@ export default function CategoryCardExpanded({ category, tools }: CategoryCardEx
   };
 
   return (
-    <div className="bg-white rounded-2xl border-2 border-gray-100 hover:border-ai-primary-light transition-all duration-200 overflow-hidden">
+    <div className="bg-white rounded-2xl border-2 border-gray-100 shadow-md hover:shadow-lg hover:border-ai-primary-light transition-all duration-200 overflow-hidden">
       {/* 카테고리 헤더 */}
       <Link
         href={`/category/${category.id}/`}
