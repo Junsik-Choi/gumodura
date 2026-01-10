@@ -39,7 +39,7 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>
-      <body className="min-h-screen flex flex-col">
+      <body className="min-h-screen flex flex-col bg-gradient-to-br from-white via-slate-50 to-blue-50">
         <LanguageProvider>
           <Header />
           <main className="flex-1 pt-14 sm:pt-20">
