@@ -24,12 +24,12 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   const tools = getToolsByCategory(id);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* 헤더 */}
-      <header className="mb-10">
+      <header className="-mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-8 sm:py-12 mb-10 bg-gradient-to-br from-slate-50 to-blue-50 border-b-2 border-gray-100 shadow-sm">
         <Link 
           href="/"
-          className="inline-flex items-center gap-2 text-ai-primary hover:text-ai-primary-dark font-medium mb-4"
+          className="inline-flex items-center gap-2 text-ai-primary hover:text-ai-primary-dark font-medium mb-6"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -37,9 +37,9 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           <TranslatedText text="홈으로" />
         </Link>
         
-        <div className="flex items-center gap-4">
-          <div className={`w-16 h-16 flex items-center justify-center rounded-2xl ${category.color} bg-opacity-10`}>
-            <span className="text-4xl">{category.icon}</span>
+        <div className="flex items-center gap-4 sm:gap-6">
+          <div className={`w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center rounded-2xl ${category.color} bg-opacity-15 shadow-md`}>
+            <span className="text-4xl sm:text-5xl">{category.icon}</span>
           </div>
           <div>
             <TranslatedText

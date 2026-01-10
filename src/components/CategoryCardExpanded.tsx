@@ -72,11 +72,11 @@ export default function CategoryCardExpanded({ category, tools }: CategoryCardEx
   };
 
   return (
-    <div className="bg-white rounded-2xl border-2 border-gray-100 shadow-lg hover:shadow-xl hover:border-ai-primary-light transition-all duration-200 overflow-hidden">
+    <div className="bg-gradient-to-br from-white to-slate-50 rounded-2xl border-2 border-gray-200 shadow-md hover:shadow-lg hover:border-ai-primary-light transition-all duration-300 overflow-hidden">
       {/* 카테고리 헤더 */}
       <Link
         href={`/category/${category.id}/`}
-        className="block p-4 sm:p-5 hover:bg-gray-50 transition-colors"
+        className="block p-4 sm:p-5 hover:bg-gradient-to-br hover:from-gray-50 hover:to-blue-50 transition-all duration-200"
       >
         <div className="flex items-center gap-3">
           {/* 아이콘 */}
@@ -84,7 +84,7 @@ export default function CategoryCardExpanded({ category, tools }: CategoryCardEx
             w-12 h-12 sm:w-14 sm:h-14
             flex items-center justify-center
             rounded-xl
-            ${category.color} bg-opacity-10
+            ${category.color} bg-opacity-15 shadow-sm
           `}>
             <span className="text-2xl sm:text-3xl">{category.icon}</span>
           </div>
@@ -152,7 +152,7 @@ export default function CategoryCardExpanded({ category, tools }: CategoryCardEx
               e.preventDefault();
               setIsExpanded(!isExpanded);
             }}
-            className="w-full py-3 px-4 bg-gray-50 hover:bg-gray-100 transition-colors border-t border-gray-100 flex items-center justify-center gap-2 text-sm font-medium text-gray-600"
+            className="w-full py-3 px-4 bg-gradient-to-r from-slate-100 to-blue-100 hover:from-slate-200 hover:to-blue-200 transition-all border-t border-gray-200 flex items-center justify-center gap-2 text-sm font-medium text-gray-700"
           >
             <span>{isExpanded ? t_collapse : `+${remainingTools.length}${t_showMore}`}</span>
             <svg 

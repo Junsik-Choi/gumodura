@@ -44,14 +44,14 @@ export default function ToolCard({ tool, showCategory = false, isTop = false }: 
     <Link
       href={`${tool.route}/`}
       className={`
-        block p-4 sm:p-6
-        bg-white rounded-2xl
-        border-2 transition-all duration-200
-        hover:shadow-lg hover:-translate-y-1
+        block p-5 sm:p-6
+        rounded-2xl
+        border transition-all duration-300
+        hover:shadow-xl hover:-translate-y-1
         active:scale-[0.98]
         ${isTop 
-          ? 'border-ai-primary shadow-lg shadow-ai-primary/10' 
-          : 'border-gray-100 hover:border-ai-primary-light'
+          ? 'bg-gradient-to-br from-blue-50 to-indigo-50 border-ai-primary shadow-lg shadow-ai-primary/20 hover:shadow-ai-primary/30' 
+          : 'bg-gradient-to-br from-white to-slate-50 border-gray-200 shadow-md hover:shadow-lg hover:border-ai-primary-light'
         }
       `}
     >
