@@ -30,7 +30,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.6;
   color: #1f2937;
-  background-color: #f9fafb;
   /* 모바일 뷰포트 높이 문제 해결 */
   min-height: 100vh;
   min-height: 100dvh;
