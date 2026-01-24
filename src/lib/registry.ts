@@ -471,6 +471,28 @@ export const TOOLS_REGISTRY: Tool[] = [
     icon: '🪜',
     isNew: true,
   },
+
+  // ============ 영상 도구 ============
+  {
+    id: 'video-to-audio',
+    name_ko: '영상 → 오디오 변환',
+    name_en: 'Video to Audio',
+    name_ja: 'ビデオをオーディオに変換',
+    name_zh: '视频转音频',
+    name_es: 'Video a Audio',
+    description_ko: '영상 파일에서 오디오만 추출해요',
+    description_en: 'Extract audio from video files',
+    category: 'video',
+    keywords: [
+      '영상', '비디오', '오디오', '음성', '추출', '변환',
+      '동영상', '음악', '오디오추출', '영상변환', 'mp3', 'mp4',
+      'mkv', 'webm', '음성추출', '오디오파일'
+    ],
+    route: '/tools/video-to-audio/',
+    icon: '🎵',
+    isNew: true,
+    isPopular: true,
+  },
 ];
 
 /**

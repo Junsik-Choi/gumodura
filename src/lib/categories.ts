@@ -113,6 +113,18 @@ export const CATEGORIES: CategoryMeta[] = [
     icon: '🏥',
     color: 'bg-rose-500',
   },
+  {
+    id: 'video',
+    name_ko: '영상 도구',
+    name_en: 'Video Tools',
+    name_ja: 'ビデオツール',
+    name_zh: '视频工具',
+    name_es: 'Herramientas de video',
+    description_ko: '영상 변환, 편집, 추출',
+    description_en: 'Video conversion, edit, extract',
+    icon: '🎥',
+    color: 'bg-cyan-500',
+  },
 ];
 
 /**

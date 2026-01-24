@@ -13,6 +13,7 @@ export type ToolCategory =
   | 'finance'   // 금융 계산기
   | 'life'      // 생활 도구
   | 'health'    // 건강/반려동물
+  | 'video'     // 영상 도구
   | 'fun';      // 재미/놀이
 
 // 카테고리 메타 정보

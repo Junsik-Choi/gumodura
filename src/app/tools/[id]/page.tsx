@@ -33,6 +33,8 @@ import PetCalorieCalculator from '@/components/tools/PetCalorieCalculator';
 // 재미/놀이 도구
 import LunchMenuPicker from '@/components/tools/LunchMenuPicker';
 import LadderGame from '@/components/tools/LadderGame';
+// 영상 도구
+import VideoToAudio from '@/components/tools/VideoToAudio';
 
 interface ToolPageProps {
   params: Promise<{ id: string }>;
@@ -80,6 +82,8 @@ const toolComponents: Record<string, React.ComponentType> = {
   // 재미/놀이 도구
   'lunch-menu': LunchMenuPicker,
   'ladder-game': LadderGame,
+  // 영상 도구
+  'video-to-audio': VideoToAudio,
   // 새 도구 추가 시 여기에 매핑
 };
 
