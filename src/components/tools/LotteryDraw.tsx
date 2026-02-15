@@ -31,10 +31,10 @@ const WIND_STRENGTH = 0.8;
 const TUBE_WIDTH = 40;
 
 function getContainerRadius(ballCount: number): number {
-  // 공 수에 따라 가변적 크기
-  const base = 140;
-  const perBall = 6;
-  return Math.min(Math.max(base, base + (ballCount - 5) * perBall), 280);
+  // 공 수에 따라 가변적 크기 (넉넉하게)
+  const base = 185;
+  const perBall = 4;
+  return Math.min(Math.max(base, base + (ballCount - 5) * perBall), 220);
 }
 
 function getBallRadius(ballCount: number): number {
@@ -71,7 +71,7 @@ export default function LotteryDraw() {
 
   // Canvas 크기
   const canvasWidth = 700;
-  const canvasHeight = 580;
+  const canvasHeight = 660;
 
   // ---- 키워드 파싱 ----
   const parseKeywords = useCallback((raw: string): string[] => {
@@ -115,7 +115,7 @@ export default function LotteryDraw() {
     setContainerSize(containerR);
 
     const centerX = canvasWidth / 2;
-    const centerY = canvasHeight / 2 + 20;
+    const centerY = canvasHeight / 2 + 40;
 
     const balls: Ball[] = keywords.map((kw, i) => ({
       x: centerX + (Math.random() - 0.5) * containerR * 0.5,
@@ -141,7 +141,7 @@ export default function LotteryDraw() {
     const balls = ballsRef.current;
     const containerR = getContainerRadius(keywords.length);
     const centerX = canvasWidth / 2;
-    const centerY = canvasHeight / 2 + 20;
+    const centerY = canvasHeight / 2 + 40;
     const currentPhase = phaseRef.current;
 
     windAngleRef.current += 0.02;
@@ -152,12 +152,36 @@ export default function LotteryDraw() {
       // 중력
       ball.vy += GRAVITY;
 
-      // 바람 효과 (혼합 시)
+      // 대류 효과 (로또 유리처럼 공기 순환: 중앙↑ 벽면↓)
       if (currentPhase === 'mixing' || currentPhase === 'drawing') {
-        const windX = Math.cos(windAngleRef.current) * WIND_STRENGTH;
-        const windY = Math.sin(windAngleRef.current * 1.3) * WIND_STRENGTH * 0.5 - 0.6;
-        ball.vx += windX;
-        ball.vy += windY;
+        const relX = (ball.x - centerX) / containerR;
+        const relY = (ball.y - centerY) / containerR;
+        const hDist = Math.abs(relX);
+        const t = windAngleRef.current;
+
+        // 중앙 상승 기류 (가운데만 강하게 위로)
+        const upForce = Math.max(0, 1 - hDist * 2.5) * WIND_STRENGTH * 1.2;
+        const upFactor = relY > -0.3 ? 1.0 : 0.3;
+        ball.vy -= upForce * upFactor;
+
+        // 상단에서 좌우로 퍼지기
+        if (relY < -0.2) {
+          ball.vx += relX * WIND_STRENGTH * 0.6;
+        }
+
+        // 하단에서 중앙으로 모이기
+        if (relY > 0.3) {
+          ball.vx -= relX * WIND_STRENGTH * 0.35;
+        }
+
+        // 벽면 근처: 하강 기류 (대류 순환 완성)
+        if (hDist > 0.45) {
+          ball.vy += WIND_STRENGTH * 0.25;
+        }
+
+        // 난류 (자연스러운 흔들림)
+        ball.vx += Math.sin(t * 2.3 + ball.y * 0.04) * 0.2;
+        ball.vy += Math.cos(t * 1.7 + ball.x * 0.04) * 0.15;
       }
 
       // 마찰
@@ -299,7 +323,7 @@ export default function LotteryDraw() {
 
     const containerR = getContainerRadius(keywords.length);
     const centerX = canvasWidth / 2;
-    const centerY = canvasHeight / 2 + 20;
+    const centerY = canvasHeight / 2 + 40;
 
     // DPR 대응
     const dpr = window.devicePixelRatio || 1;
@@ -423,25 +447,49 @@ export default function LotteryDraw() {
       }
     }
 
-    // ---- 바람 효과 표시 ----
+    // ---- 대류 효과 표시 (중앙↑ 벽면↓) ----
     if (phaseRef.current === 'mixing' || phaseRef.current === 'drawing') {
       const windTime = Date.now() / 300;
-      for (let i = 0; i < 8; i++) {
-        const wy = centerY + containerR - 30 + Math.sin(windTime + i) * 10;
-        const wx = centerX - containerR * 0.6 + (i / 8) * containerR * 1.2;
-        const wLen = 15 + Math.sin(windTime * 1.5 + i * 0.7) * 8;
-        ctx.strokeStyle = `rgba(147,197,253,${0.2 + Math.sin(windTime + i) * 0.1})`;
-        ctx.lineWidth = 1.5;
+      ctx.lineWidth = 1.5;
+
+      // 중앙 상승 화살표
+      for (let i = 0; i < 3; i++) {
+        const wx = centerX + (i - 1) * 22;
+        const baseY = centerY + containerR * 0.5;
+        const wy = baseY - ((windTime * 30 + i * 45) % (containerR * 1.2));
+        if (wy < centerY - containerR + 20 || wy > centerY + containerR - 20) continue;
+        const alpha = 0.15 + Math.sin(windTime + i) * 0.08;
+        ctx.strokeStyle = `rgba(147,197,253,${alpha})`;
         ctx.beginPath();
-        ctx.moveTo(wx, wy);
-        ctx.lineTo(wx, wy - wLen);
+        ctx.moveTo(wx, wy + 12);
+        ctx.lineTo(wx, wy);
         ctx.stroke();
-        // 작은 화살표
         ctx.beginPath();
-        ctx.moveTo(wx - 3, wy - wLen + 5);
-        ctx.lineTo(wx, wy - wLen);
-        ctx.lineTo(wx + 3, wy - wLen + 5);
+        ctx.moveTo(wx - 3, wy + 5);
+        ctx.lineTo(wx, wy);
+        ctx.lineTo(wx + 3, wy + 5);
         ctx.stroke();
+      }
+
+      // 벽면 하강 화살표 (양쪽)
+      for (const side of [-1, 1]) {
+        for (let i = 0; i < 2; i++) {
+          const wx = centerX + side * containerR * 0.7 + (i - 0.5) * 14;
+          const baseY = centerY - containerR * 0.3;
+          const wy = baseY + ((windTime * 25 + i * 50) % (containerR * 0.9));
+          if (wy < centerY - containerR + 20 || wy > centerY + containerR - 20) continue;
+          const alpha = 0.12 + Math.sin(windTime + i + side) * 0.06;
+          ctx.strokeStyle = `rgba(147,197,253,${alpha})`;
+          ctx.beginPath();
+          ctx.moveTo(wx, wy - 12);
+          ctx.lineTo(wx, wy);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(wx - 3, wy - 5);
+          ctx.lineTo(wx, wy);
+          ctx.lineTo(wx + 3, wy - 5);
+          ctx.stroke();
+        }
       }
     }
 
@@ -508,21 +556,20 @@ export default function LotteryDraw() {
     ctx.fillStyle = hlGrad;
     ctx.fill();
 
-    // 라벨
+    // 라벨 (4글자까지 표시, 폰트 크기 자동 조절)
     ctx.fillStyle = '#fff';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    const fontSize = small ? Math.max(8, r * 0.7) : Math.max(9, r * 0.65);
-    ctx.font = `bold ${fontSize}px 'Noto Sans KR', sans-serif`;
 
-    // 글자가 너무 길면 축소
-    let displayLabel = label;
-    const maxWidth = r * 1.6;
-    if (ctx.measureText(label).width > maxWidth) {
-      while (ctx.measureText(displayLabel + '…').width > maxWidth && displayLabel.length > 1) {
-        displayLabel = displayLabel.slice(0, -1);
-      }
-      displayLabel += '…';
+    let displayLabel = label.length > 4 ? label.slice(0, 4) + '…' : label;
+    let fontSize = small ? Math.max(8, r * 0.75) : Math.max(9, r * 0.8);
+    ctx.font = `bold ${fontSize}px 'Noto Sans KR', sans-serif`;
+    const maxWidth = r * 1.75;
+
+    // 폰트 크기를 줄여서 공 안에 맞추기
+    while (ctx.measureText(displayLabel).width > maxWidth && fontSize > 6) {
+      fontSize -= 0.5;
+      ctx.font = `bold ${fontSize}px 'Noto Sans KR', sans-serif`;
     }
     ctx.fillText(displayLabel, x, y);
 
