@@ -97,7 +97,7 @@ export default function LotteryDraw() {
   const drawTimerRef = useRef(0);
   const countdownStartRef = useRef(0);
   const drawDelayRef = useRef(3);
-  const drawIntervalRef = useRef(5);
+  const drawIntervalRef = useRef(2);
 
   // 입력 상태
   const [inputMode, setInputMode] = useState<'text' | 'csv'>('text');
@@ -108,7 +108,7 @@ export default function LotteryDraw() {
   const [drawnResults, setDrawnResults] = useState<string[]>([]);
   const [containerSize, setContainerSize] = useState(180);
   const [drawDelay, setDrawDelay] = useState(3);
-  const [drawInterval, setDrawInterval] = useState(5);
+  const [drawInterval, setDrawInterval] = useState(2);
 
   // i18n
   const t = useTranslatedTexts(T_TEXTS);
