@@ -63,7 +63,7 @@ export default function HomePage() {
                 text-sm font-medium whitespace-nowrap
               ">
                 <span className="text-base">{svc.icon}</span>
-                <span>{svc.label}</span>
+                <span><TranslatedText text={svc.label} /></span>
                 {svc.badge && (
                   <span className="bg-purple-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none">
                     {svc.badge}

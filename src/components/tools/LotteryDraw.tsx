@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { useTranslatedTexts } from '@/lib/use-translations';
 
 // ============ 물리 엔진 (간단한 2D) ============
 interface Ball {
@@ -29,6 +30,41 @@ const FRICTION = 0.995;
 const BOUNCE = 0.6;
 const WIND_STRENGTH = 0.8;
 const TUBE_WIDTH = 40;
+
+// i18n 번역 대상 텍스트
+const T_TEXTS = [
+  '키워드 입력',           // 0
+  '직접 입력',             // 1
+  'CSV 파일 업로드',       // 2
+  '키워드 등록',           // 3
+  'CSV 또는 TXT 파일을 선택하세요', // 4
+  '쉼표, 줄바꿈, 탭으로 구분된 파일 지원', // 5
+  '등록된 키워드',         // 6
+  '전체 삭제',             // 7
+  '뽑을 개수',             // 8
+  '카운트다운',            // 9
+  '추첨 간격',             // 10
+  '시뮬레이션 시작',       // 11
+  '추첨 시작!',            // 12
+  '카운트다운 중...',      // 13
+  '추첨 진행 중...',       // 14
+  '다시 하기',             // 15
+  '추첨 결과 발표',        // 16
+  '사용 팁',               // 17
+  '쉼표, 줄바꿈, 탭으로 구분하여 키워드를 입력할 수 있어요', // 18
+  'CSV/TXT 파일을 업로드하면 자동으로 키워드를 읽어와요',   // 19
+  '공의 수에 따라 유리 상자 크기가 자동으로 조절돼요',      // 20
+  '시뮬레이션 시작 → 공이 섞인 후 → 추첨 시작 버튼을 눌러주세요', // 21
+  '뽑을 개수를 조절하여 원하는 만큼 추첨할 수 있어요',     // 22
+  '결과',                  // 23 (canvas)
+  '공을 섞는 중... 추첨 시작을 눌러주세요!',  // 24 (canvas)
+  '추첨 준비 중...',       // 25 (canvas)
+  '추첨 중...',            // 26 (canvas)
+  '추첨 완료!',            // 27 (canvas)
+  '개',                    // 28
+  '초',                    // 29
+  '로또 번호 (1~45)',      // 30
+];
 
 function getContainerRadius(ballCount: number): number {
   // 공 수에 따라 가변적 크기 (넉넉하게)
@@ -61,7 +97,7 @@ export default function LotteryDraw() {
   const drawTimerRef = useRef(0);
   const countdownStartRef = useRef(0);
   const drawDelayRef = useRef(3);
-  const drawIntervalRef = useRef(3);
+  const drawIntervalRef = useRef(5);
 
   // 입력 상태
   const [inputMode, setInputMode] = useState<'text' | 'csv'>('text');
@@ -72,7 +108,18 @@ export default function LotteryDraw() {
   const [drawnResults, setDrawnResults] = useState<string[]>([]);
   const [containerSize, setContainerSize] = useState(180);
   const [drawDelay, setDrawDelay] = useState(3);
-  const [drawInterval, setDrawInterval] = useState(3);
+  const [drawInterval, setDrawInterval] = useState(5);
+
+  // i18n
+  const t = useTranslatedTexts(T_TEXTS);
+  const tRef = useRef(T_TEXTS);
+  useEffect(() => { tRef.current = t; }, [t]);
+
+  // 로또 번호 샘플
+  const handleSampleLotto = () => {
+    const nums = Array.from({ length: 45 }, (_, i) => String(i + 1)).join(', ');
+    setTextInput(nums);
+  };
 
   // Canvas 크기
   const canvasWidth = 700;
@@ -379,7 +426,7 @@ export default function LotteryDraw() {
     ctx.fillStyle = '#fbbf24';
     ctx.font = 'bold 14px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('🏆 결과', resultAreaX, resultAreaTop);
+    ctx.fillText('🏆 ' + tRef.current[23], resultAreaX, resultAreaTop);
 
     // 뽑힌 공들
     const drawnBalls = ballsRef.current.filter(b => b.drawn).sort((a, b) => a.drawOrder - b.drawOrder);
@@ -558,19 +605,19 @@ export default function LotteryDraw() {
     if (phaseRef.current === 'mixing') {
       ctx.fillStyle = '#38bdf8';
       ctx.font = 'bold 16px sans-serif';
-      ctx.fillText('🌀 공을 섞는 중... 추첨 시작을 눌러주세요!', canvasWidth / 2 - 30, 30);
+      ctx.fillText('🌀 ' + tRef.current[24], canvasWidth / 2 - 30, 30);
     } else if (phaseRef.current === 'countdown') {
       ctx.fillStyle = '#fbbf24';
       ctx.font = 'bold 16px sans-serif';
-      ctx.fillText('🎰 추첨 준비 중...', canvasWidth / 2 - 30, 30);
+      ctx.fillText('🎰 ' + tRef.current[25], canvasWidth / 2 - 30, 30);
     } else if (phaseRef.current === 'drawing') {
       ctx.fillStyle = '#fbbf24';
       ctx.font = 'bold 16px sans-serif';
-      ctx.fillText(`🎰 추첨 중... (${drawCountRef.current}/${drawTargetRef.current})`, canvasWidth / 2 - 30, 30);
+      ctx.fillText(`🎰 ${tRef.current[26]} (${drawCountRef.current}/${drawTargetRef.current})`, canvasWidth / 2 - 30, 30);
     } else if (phaseRef.current === 'done') {
       ctx.fillStyle = '#34d399';
       ctx.font = 'bold 18px sans-serif';
-      ctx.fillText('🎉 추첨 완료!', canvasWidth / 2 - 30, 30);
+      ctx.fillText('🎉 ' + tRef.current[27], canvasWidth / 2 - 30, 30);
     }
 
     ctx.restore();
@@ -677,8 +724,6 @@ export default function LotteryDraw() {
     const dpr = window.devicePixelRatio || 1;
     canvas.width = canvasWidth * dpr;
     canvas.height = canvasHeight * dpr;
-    canvas.style.width = `${canvasWidth}px`;
-    canvas.style.height = `${canvasHeight}px`;
 
     animFrameRef.current = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(animFrameRef.current);
@@ -733,7 +778,7 @@ export default function LotteryDraw() {
       {/* ===== 입력 섹션 ===== */}
       <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-5 border border-indigo-100">
         <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-          🎱 키워드 입력
+          🎱 {t[0]}
         </h3>
 
         {/* 입력 모드 토글 */}
@@ -746,7 +791,7 @@ export default function LotteryDraw() {
                 : 'bg-white text-gray-600 hover:bg-gray-50 border'
             }`}
           >
-            ✏️ 직접 입력
+            ✏️ {t[1]}
           </button>
           <button
             onClick={() => setInputMode('csv')}
@@ -756,7 +801,7 @@ export default function LotteryDraw() {
                 : 'bg-white text-gray-600 hover:bg-gray-50 border'
             }`}
           >
-            📁 CSV 파일 업로드
+            📁 {t[2]}
           </button>
         </div>
 
@@ -768,12 +813,20 @@ export default function LotteryDraw() {
               placeholder="쉼표(,) 또는 줄바꿈으로 구분하여 입력하세요&#10;예: 홍길동, 김철수, 이영희, 박지민&#10;&#10;또는 한 줄에 하나씩:&#10;A팀&#10;B팀&#10;C팀"
               className="w-full h-32 p-4 rounded-xl border-2 border-gray-200 focus:border-indigo-400 focus:outline-none text-gray-700 resize-none text-sm"
             />
+            <div className="flex gap-2">
+              <button
+                onClick={handleSampleLotto}
+                className="px-3 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-700 text-xs font-medium rounded-lg transition-colors border border-amber-200"
+              >
+                🎰 {t[30]}
+              </button>
+            </div>
             <button
               onClick={handleTextSubmit}
               disabled={!textInput.trim()}
               className="w-full py-3 bg-indigo-500 hover:bg-indigo-600 disabled:bg-gray-300 text-white font-bold rounded-xl transition-all active:scale-[0.98]"
             >
-              ✅ 키워드 등록 ({parseKeywords(textInput).length}개)
+              ✅ {t[3]} ({parseKeywords(textInput).length}{t[28]})
             </button>
           </div>
         ) : (
@@ -792,10 +845,10 @@ export default function LotteryDraw() {
               >
                 <span className="text-4xl">📂</span>
                 <span className="text-sm text-gray-600">
-                  CSV 또는 TXT 파일을 선택하세요
+                  {t[4]}
                 </span>
                 <span className="text-xs text-gray-400">
-                  쉼표, 줄바꿈, 탭으로 구분된 파일 지원
+                  {t[5]}
                 </span>
               </label>
             </div>
@@ -807,13 +860,13 @@ export default function LotteryDraw() {
           <div className="mt-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-gray-700">
-                등록된 키워드 ({keywords.length}개)
+                {t[6]} ({keywords.length}{t[28]})
               </span>
               <button
                 onClick={() => { setKeywords([]); resetAll(); }}
                 className="text-xs text-red-400 hover:text-red-600"
               >
-                전체 삭제
+                {t[7]}
               </button>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -846,7 +899,7 @@ export default function LotteryDraw() {
           {/* 뽑기 수 설정 */}
           <div className="flex items-center gap-4">
             <label className="text-sm font-bold text-gray-700 whitespace-nowrap">
-              🎯 뽑을 개수
+              🎯 {t[8]}
             </label>
             <input
               type="range"
@@ -858,14 +911,14 @@ export default function LotteryDraw() {
               disabled={phase !== 'idle'}
             />
             <span className="text-lg font-bold text-indigo-600 min-w-[3rem] text-center">
-              {drawCount}개
+              {drawCount}{t[28]}
             </span>
           </div>
 
           {/* 카운트다운 설정 */}
           <div className="flex items-center gap-4">
             <label className="text-sm font-bold text-gray-700 whitespace-nowrap">
-              ⏱️ 카운트다운
+              ⏱️ {t[9]}
             </label>
             <input
               type="range"
@@ -877,14 +930,14 @@ export default function LotteryDraw() {
               disabled={phase !== 'idle'}
             />
             <span className="text-lg font-bold text-amber-600 min-w-[3rem] text-center">
-              {drawDelay}초
+              {drawDelay}{t[29]}
             </span>
           </div>
 
           {/* 추첨 간격 설정 */}
           <div className="flex items-center gap-4">
             <label className="text-sm font-bold text-gray-700 whitespace-nowrap">
-              🔄 추첨 간격
+              🔄 {t[10]}
             </label>
             <input
               type="range"
@@ -896,7 +949,7 @@ export default function LotteryDraw() {
               disabled={phase !== 'idle'}
             />
             <span className="text-lg font-bold text-amber-600 min-w-[3rem] text-center">
-              {drawInterval}초
+              {drawInterval}{t[29]}
             </span>
           </div>
 
@@ -907,7 +960,7 @@ export default function LotteryDraw() {
                 onClick={startMixing}
                 className="flex-1 py-4 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white font-bold text-lg rounded-2xl transition-all active:scale-[0.97] shadow-lg shadow-indigo-200"
               >
-                🚀 시뮬레이션 시작
+                🚀 {t[11]}
               </button>
             )}
             {phase === 'mixing' && (
@@ -915,17 +968,17 @@ export default function LotteryDraw() {
                 onClick={startDrawing}
                 className="flex-1 py-4 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white font-bold text-lg rounded-2xl transition-all active:scale-[0.97] shadow-lg shadow-amber-200 animate-pulse"
               >
-                🎰 추첨 시작!
+                🎰 {t[12]}
               </button>
             )}
             {phase === 'countdown' && (
               <div className="flex-1 py-4 bg-gradient-to-r from-amber-400 to-orange-500 text-white font-bold text-lg rounded-2xl text-center animate-pulse">
-                💥 카운트다운 중...
+                💥 {t[13]}
               </div>
             )}
             {phase === 'drawing' && (
               <div className="flex-1 py-4 bg-gray-200 text-gray-500 font-bold text-lg rounded-2xl text-center">
-                ⏳ 추첨 진행 중... ({drawnResults.length}/{drawCount})
+                ⏳ {t[14]} ({drawnResults.length}/{drawCount})
               </div>
             )}
             {phase === 'done' && (
@@ -933,7 +986,7 @@ export default function LotteryDraw() {
                 onClick={resetAll}
                 className="flex-1 py-4 bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white font-bold text-lg rounded-2xl transition-all active:scale-[0.97] shadow-lg shadow-emerald-200"
               >
-                🔄 다시 하기
+                🔄 {t[15]}
               </button>
             )}
           </div>
@@ -945,8 +998,8 @@ export default function LotteryDraw() {
         <div className="flex justify-center">
           <canvas
             ref={canvasRef}
-            className="rounded-2xl shadow-2xl border-2 border-gray-800 max-w-full"
-            style={{ width: canvasWidth, maxWidth: '100%', height: 'auto' }}
+            className="rounded-2xl shadow-2xl border-2 border-gray-800 w-full"
+            style={{ maxWidth: canvasWidth, aspectRatio: `${canvasWidth} / ${canvasHeight}` }}
           />
         </div>
       )}
@@ -955,7 +1008,7 @@ export default function LotteryDraw() {
       {phase === 'done' && drawnResults.length > 0 && (
         <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-2xl p-6 border-2 border-amber-200">
           <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">
-            🎉 추첨 결과 발표
+            🎉 {t[16]}
           </h3>
           <div className="space-y-3">
             {drawnResults.map((result, i) => (
@@ -981,13 +1034,13 @@ export default function LotteryDraw() {
 
       {/* ===== 사용 팁 ===== */}
       <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100">
-        <h4 className="font-bold text-gray-700 mb-2">💡 사용 팁</h4>
+        <h4 className="font-bold text-gray-700 mb-2">💡 {t[17]}</h4>
         <ul className="text-sm text-gray-500 space-y-1">
-          <li>• 쉼표, 줄바꿈, 탭으로 구분하여 키워드를 입력할 수 있어요</li>
-          <li>• CSV/TXT 파일을 업로드하면 자동으로 키워드를 읽어와요</li>
-          <li>• 공의 수에 따라 유리 상자 크기가 자동으로 조절돼요</li>
-          <li>• 시뮬레이션 시작 → 공이 섞인 후 → 추첨 시작 버튼을 눌러주세요</li>
-          <li>• 뽑을 개수를 조절하여 원하는 만큼 추첨할 수 있어요</li>
+          <li>• {t[18]}</li>
+          <li>• {t[19]}</li>
+          <li>• {t[20]}</li>
+          <li>• {t[21]}</li>
+          <li>• {t[22]}</li>
         </ul>
       </div>
     </div>
