@@ -305,7 +305,7 @@ export default function LotteryDraw() {
       if (elapsed >= drawDelayRef.current) {
         phaseRef.current = 'drawing';
         setPhase('drawing');
-        drawTimerRef.current = drawIntervalRef.current * 60; // 첫 추첨 즉시
+        drawTimerRef.current = 0; // 첫 추첨 즉시 (timestamp 0 → 즉시 트리거)
       }
     }
 
@@ -315,9 +315,10 @@ export default function LotteryDraw() {
       const tubeY = centerY - containerR - 20;
 
       if (!tubeTargetRef.current) {
-        drawTimerRef.current++;
-        const intervalFrames = drawCountRef.current === 0 ? 10 : drawIntervalRef.current * 60;
-        if (drawTimerRef.current > intervalFrames) {
+        if (drawTimerRef.current === 0) drawTimerRef.current = Date.now(); // 최초 시작 시각 기록
+        const elapsedMs = Date.now() - drawTimerRef.current;
+        const intervalMs = drawCountRef.current === 0 ? 200 : drawIntervalRef.current * 1000;
+        if (elapsedMs >= intervalMs) {
           // 튜브 입구에 가장 가까운 공 선택
           let closest: Ball | null = null;
           let closestDist = Infinity;
@@ -362,7 +363,7 @@ export default function LotteryDraw() {
           drawCountRef.current++;
           target.drawOrder = drawCountRef.current;
           tubeTargetRef.current = null;
-          drawTimerRef.current = 0;
+          drawTimerRef.current = Date.now(); // 다음 추첨 타이머 시작
 
           // 결과 업데이트
           setDrawnResults(prev => [...prev, target.label]);
