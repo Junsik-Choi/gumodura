@@ -53,21 +53,26 @@ export default function LotteryDraw() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const ballsRef = useRef<Ball[]>([]);
   const animFrameRef = useRef<number>(0);
-  const phaseRef = useRef<'idle' | 'mixing' | 'drawing' | 'done'>('idle');
+  const phaseRef = useRef<'idle' | 'mixing' | 'countdown' | 'drawing' | 'done'>('idle');
   const drawCountRef = useRef(0);
   const drawTargetRef = useRef(1);
   const windAngleRef = useRef(0);
   const tubeTargetRef = useRef<Ball | null>(null);
   const drawTimerRef = useRef(0);
+  const countdownStartRef = useRef(0);
+  const drawDelayRef = useRef(3);
+  const drawIntervalRef = useRef(3);
 
   // 입력 상태
   const [inputMode, setInputMode] = useState<'text' | 'csv'>('text');
   const [textInput, setTextInput] = useState('');
   const [keywords, setKeywords] = useState<string[]>([]);
   const [drawCount, setDrawCount] = useState(1);
-  const [phase, setPhase] = useState<'idle' | 'mixing' | 'drawing' | 'done'>('idle');
+  const [phase, setPhase] = useState<'idle' | 'mixing' | 'countdown' | 'drawing' | 'done'>('idle');
   const [drawnResults, setDrawnResults] = useState<string[]>([]);
   const [containerSize, setContainerSize] = useState(180);
+  const [drawDelay, setDrawDelay] = useState(3);
+  const [drawInterval, setDrawInterval] = useState(3);
 
   // Canvas 크기
   const canvasWidth = 700;
@@ -153,14 +158,14 @@ export default function LotteryDraw() {
       ball.vy += GRAVITY;
 
       // 대류 효과 (로또 유리처럼 공기 순환: 중앙↑ 벽면↓)
-      if (currentPhase === 'mixing' || currentPhase === 'drawing') {
+      if (currentPhase === 'mixing' || currentPhase === 'countdown' || currentPhase === 'drawing') {
         const relX = (ball.x - centerX) / containerR;
         const relY = (ball.y - centerY) / containerR;
         const hDist = Math.abs(relX);
         const t = windAngleRef.current;
 
         // 중앙 상승 기류 (가운데만 강하게 위로)
-        const upForce = Math.max(0, 1 - hDist * 2.5) * WIND_STRENGTH * 1.2;
+        const upForce = Math.max(0, 1 - hDist * 2.25) * WIND_STRENGTH * 1.32;
         const upFactor = relY > -0.3 ? 1.0 : 0.3;
         ball.vy -= upForce * upFactor;
 
@@ -247,6 +252,16 @@ export default function LotteryDraw() {
       }
     }
 
+    // ---- 카운트다운 → 추첨 전환 ----
+    if (currentPhase === 'countdown') {
+      const elapsed = (Date.now() - countdownStartRef.current) / 1000;
+      if (elapsed >= drawDelayRef.current) {
+        phaseRef.current = 'drawing';
+        setPhase('drawing');
+        drawTimerRef.current = drawIntervalRef.current * 60; // 첫 추첨 즉시
+      }
+    }
+
     // ---- 추첨 빨려가기 로직 ----
     if (currentPhase === 'drawing') {
       const tubeX = centerX;
@@ -254,7 +269,8 @@ export default function LotteryDraw() {
 
       if (!tubeTargetRef.current) {
         drawTimerRef.current++;
-        if (drawTimerRef.current > 60) { // ~1초 후
+        const intervalFrames = drawCountRef.current === 0 ? 10 : drawIntervalRef.current * 60;
+        if (drawTimerRef.current > intervalFrames) {
           // 튜브 입구에 가장 가까운 공 선택
           let closest: Ball | null = null;
           let closestDist = Infinity;
@@ -447,52 +463,6 @@ export default function LotteryDraw() {
       }
     }
 
-    // ---- 대류 효과 표시 (중앙↑ 벽면↓) ----
-    if (phaseRef.current === 'mixing' || phaseRef.current === 'drawing') {
-      const windTime = Date.now() / 300;
-      ctx.lineWidth = 1.5;
-
-      // 중앙 상승 화살표
-      for (let i = 0; i < 3; i++) {
-        const wx = centerX + (i - 1) * 22;
-        const baseY = centerY + containerR * 0.5;
-        const wy = baseY - ((windTime * 30 + i * 45) % (containerR * 1.2));
-        if (wy < centerY - containerR + 20 || wy > centerY + containerR - 20) continue;
-        const alpha = 0.15 + Math.sin(windTime + i) * 0.08;
-        ctx.strokeStyle = `rgba(147,197,253,${alpha})`;
-        ctx.beginPath();
-        ctx.moveTo(wx, wy + 12);
-        ctx.lineTo(wx, wy);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(wx - 3, wy + 5);
-        ctx.lineTo(wx, wy);
-        ctx.lineTo(wx + 3, wy + 5);
-        ctx.stroke();
-      }
-
-      // 벽면 하강 화살표 (양쪽)
-      for (const side of [-1, 1]) {
-        for (let i = 0; i < 2; i++) {
-          const wx = centerX + side * containerR * 0.7 + (i - 0.5) * 14;
-          const baseY = centerY - containerR * 0.3;
-          const wy = baseY + ((windTime * 25 + i * 50) % (containerR * 0.9));
-          if (wy < centerY - containerR + 20 || wy > centerY + containerR - 20) continue;
-          const alpha = 0.12 + Math.sin(windTime + i + side) * 0.06;
-          ctx.strokeStyle = `rgba(147,197,253,${alpha})`;
-          ctx.beginPath();
-          ctx.moveTo(wx, wy - 12);
-          ctx.lineTo(wx, wy);
-          ctx.stroke();
-          ctx.beginPath();
-          ctx.moveTo(wx - 3, wy - 5);
-          ctx.lineTo(wx, wy);
-          ctx.lineTo(wx + 3, wy - 5);
-          ctx.stroke();
-        }
-      }
-    }
-
     // ---- 공 그리기 ----
     for (const ball of ballsRef.current) {
       if (ball.drawn) continue;
@@ -501,12 +471,98 @@ export default function LotteryDraw() {
       drawBall(ctx, ball.x, ball.y, ball.radius * scale, ball.color, ball.label, false, alpha);
     }
 
+    // ---- 카운트다운 애니메이션 ----
+    if (phaseRef.current === 'countdown') {
+      const elapsed = (Date.now() - countdownStartRef.current) / 1000;
+      const currentNum = Math.ceil(drawDelayRef.current - elapsed);
+
+      if (currentNum > 0 && currentNum <= drawDelayRef.current) {
+        const withinSecond = 1 - ((drawDelayRef.current - elapsed) % 1);
+
+        // 어두운 오버레이
+        const overlayAlpha = withinSecond < 0.15 ? withinSecond / 0.15 * 0.35 : Math.max(0.05, 0.35 - Math.max(0, withinSecond - 0.6) * 0.75);
+        ctx.fillStyle = `rgba(0, 0, 0, ${overlayAlpha})`;
+        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+        // 슬램 애니메이션 계산
+        let scale: number, alpha: number;
+        if (withinSecond < 0.1) {
+          const t = withinSecond / 0.1;
+          scale = 5.0 - 4.0 * t * t;
+          alpha = t;
+        } else if (withinSecond < 0.2) {
+          const t = (withinSecond - 0.1) / 0.1;
+          scale = 1.0 + Math.sin(t * Math.PI) * 0.2;
+          alpha = 1;
+        } else if (withinSecond < 0.6) {
+          scale = 1.0;
+          alpha = 1;
+        } else {
+          const t = (withinSecond - 0.6) / 0.4;
+          scale = 1.0 + t * 0.3;
+          alpha = 1 - t;
+        }
+
+        ctx.save();
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        // 임팩트 플래시
+        if (withinSecond < 0.06) {
+          ctx.fillStyle = `rgba(255, 255, 255, ${(0.06 - withinSecond) / 0.06 * 0.25})`;
+          ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+        }
+
+        // 충격파 링
+        if (withinSecond > 0.1 && withinSecond < 0.5) {
+          const ringT = (withinSecond - 0.1) / 0.4;
+          const ringR = ringT * 200;
+          const ringAlpha = (1 - ringT) * 0.3;
+          ctx.strokeStyle = `rgba(251, 191, 36, ${ringAlpha})`;
+          ctx.lineWidth = Math.max(0.5, 3 - ringT * 3);
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, ringR, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+
+        // 번호 뒤 글로우
+        const glowR = 90 * scale;
+        const numGlow = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, glowR);
+        numGlow.addColorStop(0, `rgba(251, 191, 36, ${alpha * 0.35})`);
+        numGlow.addColorStop(1, 'rgba(251, 191, 36, 0)');
+        ctx.fillStyle = numGlow;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, glowR, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 큰 숫자
+        const numFontSize = 150 * scale;
+        ctx.font = `900 ${numFontSize}px Impact, 'Arial Black', sans-serif`;
+        ctx.shadowColor = `rgba(251, 191, 36, ${alpha * 0.6})`;
+        ctx.shadowBlur = 40;
+        ctx.fillStyle = `rgba(251, 191, 36, ${alpha})`;
+        ctx.fillText(String(currentNum), centerX, centerY);
+        ctx.shadowBlur = 0;
+
+        // 흰색 외곽선
+        ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.4})`;
+        ctx.lineWidth = 2;
+        ctx.strokeText(String(currentNum), centerX, centerY);
+
+        ctx.restore();
+      }
+    }
+
     // ---- 상태 텍스트 ----
     ctx.textAlign = 'center';
     if (phaseRef.current === 'mixing') {
       ctx.fillStyle = '#38bdf8';
       ctx.font = 'bold 16px sans-serif';
       ctx.fillText('🌀 공을 섞는 중... 추첨 시작을 눌러주세요!', canvasWidth / 2 - 30, 30);
+    } else if (phaseRef.current === 'countdown') {
+      ctx.fillStyle = '#fbbf24';
+      ctx.font = 'bold 16px sans-serif';
+      ctx.fillText('🎰 추첨 준비 중...', canvasWidth / 2 - 30, 30);
     } else if (phaseRef.current === 'drawing') {
       ctx.fillStyle = '#fbbf24';
       ctx.font = 'bold 16px sans-serif';
@@ -639,15 +695,24 @@ export default function LotteryDraw() {
     drawTargetRef.current = drawCount;
   };
 
-  // ---- 추첨 시작 ----
+  // ---- 추첨 시작 (카운트다운 → 추첨) ----
   const startDrawing = () => {
     if (phaseRef.current !== 'mixing') return;
-    phaseRef.current = 'drawing';
-    setPhase('drawing');
+    drawDelayRef.current = drawDelay;
+    drawIntervalRef.current = drawInterval;
     drawTargetRef.current = drawCount;
     drawCountRef.current = 0;
     drawTimerRef.current = 0;
     tubeTargetRef.current = null;
+
+    if (drawDelay === 0) {
+      phaseRef.current = 'drawing';
+      setPhase('drawing');
+    } else {
+      countdownStartRef.current = Date.now();
+      phaseRef.current = 'countdown';
+      setPhase('countdown');
+    }
   };
 
   // ---- 리셋 ----
@@ -797,6 +862,44 @@ export default function LotteryDraw() {
             </span>
           </div>
 
+          {/* 카운트다운 설정 */}
+          <div className="flex items-center gap-4">
+            <label className="text-sm font-bold text-gray-700 whitespace-nowrap">
+              ⏱️ 카운트다운
+            </label>
+            <input
+              type="range"
+              min={0}
+              max={10}
+              value={drawDelay}
+              onChange={(e) => setDrawDelay(Number(e.target.value))}
+              className="flex-1 accent-amber-500"
+              disabled={phase !== 'idle'}
+            />
+            <span className="text-lg font-bold text-amber-600 min-w-[3rem] text-center">
+              {drawDelay}초
+            </span>
+          </div>
+
+          {/* 추첨 간격 설정 */}
+          <div className="flex items-center gap-4">
+            <label className="text-sm font-bold text-gray-700 whitespace-nowrap">
+              🔄 추첨 간격
+            </label>
+            <input
+              type="range"
+              min={1}
+              max={10}
+              value={drawInterval}
+              onChange={(e) => setDrawInterval(Number(e.target.value))}
+              className="flex-1 accent-amber-500"
+              disabled={phase !== 'idle'}
+            />
+            <span className="text-lg font-bold text-amber-600 min-w-[3rem] text-center">
+              {drawInterval}초
+            </span>
+          </div>
+
           {/* 액션 버튼 */}
           <div className="flex gap-3">
             {phase === 'idle' && (
@@ -814,6 +917,11 @@ export default function LotteryDraw() {
               >
                 🎰 추첨 시작!
               </button>
+            )}
+            {phase === 'countdown' && (
+              <div className="flex-1 py-4 bg-gradient-to-r from-amber-400 to-orange-500 text-white font-bold text-lg rounded-2xl text-center animate-pulse">
+                💥 카운트다운 중...
+              </div>
             )}
             {phase === 'drawing' && (
               <div className="flex-1 py-4 bg-gray-200 text-gray-500 font-bold text-lg rounded-2xl text-center">
