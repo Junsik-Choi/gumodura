@@ -57,7 +57,7 @@ export default function VideoToAudio() {
   useEffect(() => {
     const initFFmpeg = async () => {
       try {
-        const { FFmpeg, fetchFile } = await import('@ffmpeg/ffmpeg');
+        const { FFmpeg, fetchFile } = await import(/* webpackIgnore: true */ '@ffmpeg/ffmpeg');
         const ffmpeg = new FFmpeg();
 
         if (!ffmpeg.isLoaded()) {
@@ -123,7 +123,7 @@ export default function VideoToAudio() {
         message: processingVideoLabel,
       });
 
-      const { FFmpeg } = await import('@ffmpeg/ffmpeg');
+      const { FFmpeg } = await import(/* webpackIgnore: true */ '@ffmpeg/ffmpeg');
       const ffmpeg = new FFmpeg();
 
       if (!ffmpeg.isLoaded()) {
@@ -151,8 +151,8 @@ export default function VideoToAudio() {
       });
 
       // 출력 파일 읽기
-      const data = ffmpeg.readFile('output.mp3');
-      const audioBlob = new Blob([data.buffer], { type: 'audio/mpeg' });
+      const data = await ffmpeg.readFile('output.mp3');
+      const audioBlob = new Blob([data as BlobPart], { type: 'audio/mpeg' });
       const audioUrl = URL.createObjectURL(audioBlob);
 
       // 파일명 생성
@@ -236,7 +236,7 @@ export default function VideoToAudio() {
               <div className="bg-gray-100 rounded-lg overflow-hidden">
                 <video
                   ref={videoRef}
-                  src={videoPreview}
+                  src={videoPreview || undefined}
                   controls
                   className="w-full max-h-64 bg-black"
                 />
