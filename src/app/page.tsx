@@ -8,14 +8,14 @@ import { getToolsByCategory } from '@/lib/registry';
 
 /** 대표 서비스 바로가기 데이터 */
 const QUICK_SERVICES = [
-  { icon: '🎱', label: '추첨 시뮬레이터', href: '/tools/lottery-draw/', color: 'from-indigo-500 to-purple-500', badge: 'NEW' },
-  { icon: '📄', label: '이미지→PDF', href: '/tools/images-to-pdf/', color: 'from-blue-500 to-cyan-500', badge: '인기' },
-  { icon: '📲', label: 'QR 만들기', href: '/tools/qr-generator/', color: 'from-purple-500 to-pink-500', badge: '인기' },
-  { icon: '🎬', label: '유튜브 썸네일', href: '/tools/youtube-thumbnail/', color: 'from-red-500 to-orange-500', badge: '' },
-  { icon: '💰', label: '연봉 계산기', href: '/tools/salary-calculator/', color: 'from-emerald-500 to-teal-500', badge: '인기' },
-  { icon: '✂️', label: '배경 제거', href: '/tools/background-remover/', color: 'from-pink-500 to-rose-500', badge: '' },
-  { icon: '🪜', label: '사다리 타기', href: '/tools/ladder-game/', color: 'from-amber-500 to-yellow-500', badge: '' },
-  { icon: '🎖️', label: '전역일 계산', href: '/tools/military-discharge/', color: 'from-green-600 to-emerald-500', badge: '인기' },
+  { icon: '🎱', label: '추첨 시뮬레이터', href: '/tools/lottery-draw/', badge: 'NEW' },
+  { icon: '📄', label: '이미지→PDF', href: '/tools/images-to-pdf/', badge: '' },
+  { icon: '📲', label: 'QR 만들기', href: '/tools/qr-generator/', badge: '' },
+  { icon: '🎬', label: '유튜브 썸네일', href: '/tools/youtube-thumbnail/', badge: '' },
+  { icon: '💰', label: '연봉 계산기', href: '/tools/salary-calculator/', badge: '' },
+  { icon: '✂️', label: '배경 제거', href: '/tools/background-remover/', badge: '' },
+  { icon: '🪜', label: '사다리 타기', href: '/tools/ladder-game/', badge: '' },
+  { icon: '🎖️', label: '전역일 계산', href: '/tools/military-discharge/', badge: '' },
 ];
 
 /**
@@ -48,33 +48,24 @@ export default function HomePage() {
         <HomeSearchBar />
       </section>
 
-      {/* ⚡ 대표 서비스 바로가기 */}
-      <section className="mb-6 sm:mb-10">
-        <div className="flex items-center justify-center gap-2 mb-4">
-          <span className="text-lg">⚡</span>
-          <TranslatedText
-            as="h2"
-            className="text-sm sm:text-base font-semibold text-gray-500"
-            text="바로가기"
-          />
-        </div>
-        <div className="flex flex-wrap justify-center gap-2 sm:gap-3 max-w-3xl mx-auto">
+      {/* 대표 서비스 바로가기 - 한 줄 가로 스크롤 */}
+      <section className="mb-6 sm:mb-10 -mx-3 sm:-mx-6 lg:-mx-8">
+        <div className="flex gap-2 sm:gap-3 px-3 sm:px-6 lg:px-8 overflow-x-auto scrollbar-hide">
           {QUICK_SERVICES.map((svc) => (
-            <Link key={svc.href} href={svc.href}>
-              <div className={`
-                relative flex items-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3
-                bg-gradient-to-r ${svc.color}
-                text-white rounded-xl sm:rounded-2xl
-                shadow-md hover:shadow-lg
-                hover:scale-[1.04] active:scale-[0.97]
+            <Link key={svc.href} href={svc.href} className="shrink-0">
+              <div className="
+                relative flex items-center gap-1.5 px-3.5 py-2 sm:px-4 sm:py-2.5
+                bg-white border border-purple-100
+                text-gray-700 rounded-full
+                shadow-sm hover:shadow-md hover:border-purple-200 hover:bg-purple-50
+                hover:scale-[1.03] active:scale-[0.97]
                 transition-all duration-200 cursor-pointer
-                text-sm sm:text-base font-semibold
-                whitespace-nowrap
-              `}>
-                <span className="text-lg sm:text-xl">{svc.icon}</span>
+                text-sm font-medium whitespace-nowrap
+              ">
+                <span className="text-base">{svc.icon}</span>
                 <span>{svc.label}</span>
                 {svc.badge && (
-                  <span className="absolute -top-1.5 -right-1.5 bg-yellow-400 text-yellow-900 text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-none shadow">
+                  <span className="bg-purple-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none">
                     {svc.badge}
                   </span>
                 )}
