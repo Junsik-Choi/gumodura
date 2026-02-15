@@ -59,6 +59,15 @@ export default function Header() {
           </Link>
 
           <div className="flex items-center gap-3">
+            {/* 🎱 로또 추첨 바로가기 버튼 */}
+            <Link
+              href="/tools/lottery-draw/"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-sm font-bold rounded-full hover:from-indigo-600 hover:to-purple-600 transition-all active:scale-95 shadow-md shadow-indigo-200"
+            >
+              <span>🎱</span>
+              <span>추첨</span>
+            </Link>
+
             {/* 데스크탑 검색창 - 메인 페이지에서는 숨김 */}
             {!isHomePage && (
             <form 

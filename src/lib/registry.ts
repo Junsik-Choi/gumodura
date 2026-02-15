@@ -471,6 +471,27 @@ export const TOOLS_REGISTRY: Tool[] = [
     icon: '🪜',
     isNew: true,
   },
+  {
+    id: 'lottery-draw',
+    name_ko: '로또 추첨 시뮬레이터',
+    name_en: 'Lottery Draw Simulator',
+    name_ja: '抽選シミュレーター',
+    name_zh: '抽奖模拟器',
+    name_es: 'Simulador de sorteo',
+    description_ko: '로또처럼 공이 회전하며 랜덤 추첨! 키워드/이름을 넣고 뽑아보세요',
+    description_en: 'Lotto-style ball drawing simulator with physics!',
+    category: 'fun',
+    keywords: [
+      '로또', '추첨', '시뮬레이터', '랜덤', '뽑기', '추첨기',
+      '이름뽑기', '제비뽑기', '당첨', '구슬', '공뽑기',
+      '로또추첨', '랜덤추첨', '추첨시뮬레이션', 'lottery',
+      '순서정하기', '무작위', '복권'
+    ],
+    route: '/tools/lottery-draw/',
+    icon: '🎱',
+    isNew: true,
+    isPopular: true,
+  },
 
   // ============ 영상 도구 ============
   {

@@ -33,6 +33,7 @@ import PetCalorieCalculator from '@/components/tools/PetCalorieCalculator';
 // 재미/놀이 도구
 import LunchMenuPicker from '@/components/tools/LunchMenuPicker';
 import LadderGame from '@/components/tools/LadderGame';
+import LotteryDraw from '@/components/tools/LotteryDraw';
 // 영상 도구
 import VideoToAudio from '@/components/tools/VideoToAudio';
 
@@ -82,6 +83,7 @@ const toolComponents: Record<string, React.ComponentType> = {
   // 재미/놀이 도구
   'lunch-menu': LunchMenuPicker,
   'ladder-game': LadderGame,
+  'lottery-draw': LotteryDraw,
   // 영상 도구
   'video-to-audio': VideoToAudio,
   // 새 도구 추가 시 여기에 매핑
